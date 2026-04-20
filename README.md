@@ -1,9 +1,27 @@
-# 🔬 ScholarSearch ID — Answer Engine Jurnal Akademik Indonesia
+<p align="center">
+  <img src="https://readme-typing-svg.demolab.com?font=Press+Start+2P&size=25&pause=1000&color=007AFF&center=true&vCenter=true&width=1000&lines=Welcome+to+Scholar+Search+ID;Search+Engine+and+Answer+Engine;Teknik+Informatika+UTM" alt="Scholar Search ID" />
+</p>
 
-> **Proyek Akhir Mata Kuliah Temu Kembali Informasi (TKI)**  
-> Prodi Teknik Informatika — Universitas Trunojoyo Madura — 2026
+<p align="center">
+    <img src="https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python" />
+    <img src="https://img.shields.io/badge/Flask-000000?style=for-the-badge&logo=flask&logoColor=white" alt="Flask" />
+    <img src="https://img.shields.io/badge/SQLite-07405E?style=for-the-badge&logo=sqlite&logoColor=white" alt="SQLite" />
+    <img src="https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white" alt="HTML5" />
+    <img src="https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white" alt="CSS3" /><br>
+    <img src="https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black" alt="JavaScript" />
+    <img src="https://img.shields.io/badge/Grok-000000?style=for-the-badge&logo=x&logoColor=white" alt="Grok" />
+    <img src="https://img.shields.io/badge/Gemini_API-8E75B2?style=for-the-badge&logo=google&logoColor=white" alt="Gemini API" />
+    <img src="https://img.shields.io/badge/NVIDIA-76B900?style=for-the-badge&logo=nvidia&logoColor=white" alt="NVIDIA" />
+</p>
 
----
+<p align="center">
+  <strong><i>Sistem Multi-Stage Retrieval & Answer Engine untuk Pencarian Presisi.</i></strong>
+  <br />
+  Proyek Akhir Mata Kuliah Temu Kembali Informasi
+  <br />
+  Program Studi Teknik Informatika, Universitas Trunojoyo Madura.
+</p>
+<img src="https://user-images.githubusercontent.com/73097560/115834477-dbab4500-a447-11eb-908a-139a6edaec5c.gif">
 
 ## 🎯 Mengapa Proyek Ini Akan Membuat Dosen Terkesan?
 
@@ -18,7 +36,7 @@ Dosen IR menilai proyek berdasarkan **3 pilar utama**:
 > [!IMPORTANT]
 > **Kunci utama**: Proyek ini bukan sekadar "search engine biasa". Ini adalah **sistem IR multi-stage** yang membuktikan kamu memahami SEMUA 12 materi, dengan visualisasi interaktif yang membuat setiap konsep *terlihat jelas* saat demo.
 
----
+<img src="https://user-images.githubusercontent.com/73097560/115834477-dbab4500-a447-11eb-908a-139a6edaec5c.gif">
 
 ## 🏗️ Apa yang Akan Kita Bangun?
 
@@ -36,8 +54,7 @@ Dosen IR menilai proyek berdasarkan **3 pilar utama**:
 - ✅ Paper punya **metadata terstruktur** (judul, abstrak, penulis, tahun, keyword) → mudah di-index
 - ✅ Relevan langsung untuk mahasiswa → dosen lihat "ini bermanfaat, bukan cuma tugas"
 - ✅ Dataset tersedia dari **Garuda, SINTA, atau OAI-PMH** (jurnal berbasis OJS Indonesia)
-
----
+<img src="https://user-images.githubusercontent.com/73097560/115834477-dbab4500-a447-11eb-908a-139a6edaec5c.gif">
 
 ## 🧬 Arsitektur Sistem Lengkap
 
@@ -106,8 +123,7 @@ graph TB
     style R3 fill:#F59E0B,color:#fff
     style R5 fill:#EF4444,color:#fff
 ```
-
----
+<img src="https://user-images.githubusercontent.com/73097560/115834477-dbab4500-a447-11eb-908a-139a6edaec5c.gif">
 
 ## 📋 Mapping Detail: Setiap Materi → Fitur Konkret
 
@@ -234,7 +250,7 @@ def bm25_score(query_terms, doc_id, k1=1.5, b=0.75):
 | **Visualisasi** | Interactive citation network graph |
 | **Ranking Boost** | PageRank score sebagai faktor tambahan di final ranking |
 
----
+<img src="https://user-images.githubusercontent.com/73097560/115834477-dbab4500-a447-11eb-908a-139a6edaec5c.gif">
 
 ## 🖥️ Desain UI / UX
 
@@ -356,7 +372,7 @@ def bm25_score(query_terms, doc_id, k1=1.5, b=0.75):
 └─────────────────────────────────────────────────────┘
 ```
 
----
+<img src="https://user-images.githubusercontent.com/73097560/115834477-dbab4500-a447-11eb-908a-139a6edaec5c.gif">
 
 ## 🛠️ Tech Stack Detail
 
@@ -373,7 +389,7 @@ def bm25_score(query_terms, doc_id, k1=1.5, b=0.75):
 | **Database** | SQLite | Metadata paper, relevance judgments |
 | **Evaluasi** | Custom module | P@K, MAP, NDCG, MRR — dari scratch |
 
----
+<img src="https://user-images.githubusercontent.com/73097560/115834477-dbab4500-a447-11eb-908a-139a6edaec5c.gif">
 
 ## 📂 Strategi Pengumpulan Data
 
@@ -402,8 +418,7 @@ def bm25_score(query_terms, doc_id, k1=1.5, b=0.75):
     "url": "https://..."
 }
 ```
-
----
+<img src="https://user-images.githubusercontent.com/73097560/115834477-dbab4500-a447-11eb-908a-139a6edaec5c.gif">
 
 ## 📅 Timeline Implementasi
 
@@ -440,8 +455,7 @@ gantt
     Dokumentasi & Laporan       :e2, after e1, 3d
     Demo Preparation            :e3, after e2, 2d
 ```
-
----
+<img src="https://user-images.githubusercontent.com/73097560/115834477-dbab4500-a447-11eb-908a-139a6edaec5c.gif">
 
 ## 🏆 Faktor "Wow" yang Akan Membuat Dosen Terkesan
 
@@ -472,8 +486,7 @@ gantt
 
 ### 8. 🎛️ Parameter Tuning Live
 > Slider untuk BM25 parameters (k1, b) dan LM smoothing (λ, μ) — hasil berubah real-time saat di-geser. Dosen bisa "bermain" dengan parameter dan lihat efeknya.
-
----
+<img src="https://user-images.githubusercontent.com/73097560/115834477-dbab4500-a447-11eb-908a-139a6edaec5c.gif">
 
 ## 📁 Struktur Proyek
 
