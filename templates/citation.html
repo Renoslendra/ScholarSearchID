@@ -3,9 +3,281 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>ScholarSearchID - Citation Network</title>
+  <title>Synthesized Answer — ScholarSearch</title>
+  <link rel="stylesheet" href="/static/css/style.css">
+  <style>
+    /* ===== Dark theme styles for Answer page ===== */
+
+    .answer-container {
+      max-width: var(--max-w);
+      margin: 0 auto;
+      padding: 40px 32px 60px;
+    }
+
+    .answer-container > h1 {
+      font-size: 32px;
+      font-weight: 800;
+      margin-bottom: 24px;
+      color: #fff;
+    }
+
+    /* Answer card */
+    .answer-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 28px 28px 20px;
+      transition: border-color 0.2s ease;
+    }
+    .answer-card:hover {
+      border-color: rgba(37,99,235,0.4);
+    }
+
+    .answer-query {
+      font-size: 15px;
+      color: var(--text-link);
+      margin-bottom: 16px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border);
+    }
+    .answer-query strong {
+      color: var(--text-link);
+    }
+
+    .answer-body {
+      font-size: 15px;
+      line-height: 1.8;
+      color: var(--text-sec);
+    }
+    .answer-body p {
+      margin-bottom: 4px;
+    }
+
+    .ref-link {
+      color: var(--accent);
+      font-weight: 600;
+      font-size: 13px;
+      transition: color 0.2s;
+    }
+    .ref-link:hover {
+      color: var(--text-link);
+      text-decoration: underline;
+    }
+
+    .answer-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 20px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border);
+    }
+
+    .answer-source {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+    .answer-source svg {
+      width: 18px;
+      height: 18px;
+      color: var(--accent);
+      flex-shrink: 0;
+    }
+
+    .answer-actions {
+      display: flex;
+      gap: 8px;
+    }
+    .answer-actions button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 36px;
+      background: var(--bg-surface-2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .answer-actions button:hover {
+      background: var(--bg-elevated);
+      border-color: var(--accent);
+      color: var(--text-link);
+    }
+
+    /* Referenced Literature */
+    .ref-section {
+      margin-top: 40px;
+    }
+    .ref-section h2 {
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 20px;
+      color: var(--text);
+    }
+
+    .ref-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .ref-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+      cursor: pointer;
+    }
+    .ref-card:hover {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px var(--accent), 0 8px 24px rgba(37,99,235,0.08);
+      transform: translateY(-2px);
+    }
+
+    .ref-num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      background: rgba(37,99,235,0.12);
+      color: var(--text-link);
+      font-size: 12px;
+      font-weight: 700;
+      border-radius: var(--radius-sm);
+      margin-bottom: 10px;
+    }
+
+    .ref-card h4 {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+      line-height: 1.5;
+      margin-bottom: 8px;
+    }
+
+    .ref-author {
+      font-size: 13px;
+      color: var(--text-sec);
+      margin-bottom: 4px;
+    }
+
+    .ref-journal {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-muted);
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    /* Scroll reveal */
+    .reveal { opacity: 0; transform: translateY(16px); transition: opacity 0.5s ease, transform 0.5s ease; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    /* Pulse dot for source indicator */
+    .pulse-dot {
+      display: inline-block;
+      width: 8px; height: 8px;
+      background: #22c55e;
+      border-radius: 50%;
+      margin-right: 8px;
+      animation: pulse 2s ease infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(0.8); }
+    }
+
+    .footer {
+      background: var(--bg-surface);
+      border-top-color: var(--border);
+    }
+
+    @media (max-width: 768px) {
+      .answer-container { padding: 24px 16px 48px; }
+      .ref-grid { grid-template-columns: 1fr; }
+      .answer-footer { flex-direction: column; gap: 12px; align-items: flex-start; }
+    }
+  </style>
 </head>
 <body>
-  <h1>Citation Network</h1>
+  <nav class="navbar">
+    <a href="/" class="navbar-logo">ScholarSearch</a>
+    <ul class="navbar-nav">
+      <li><a href="/search">Search</a></li>
+      <li><a href="/citation" class="active">Answer</a></li>
+      <li><a href="/library">Library</a></li>
+      <li><a href="/lab">Lab</a></li>
+    </ul>
+    <div class="navbar-right">
+      <div class="navbar-search">
+        <input type="text" id="nav-search" placeholder="Search...">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      </div>
+      <button class="btn-signin" onclick="location.href='/signin'">Sign In</button>
+    </div>
+  </nav>
+
+  <main class="answer-container">
+    <h1>Synthesized Answer</h1>
+    <div class="answer-card">
+      <p class="answer-query"><strong>Query: Implications of CRIPSR-Cas9 off-target mutations in somatic cell therapies</strong></p>
+      <div class="answer-body">
+        <p>The application of CRISPR-Cas9 in somatic cell therapies presents significant potential for treating genetic disorders, but off-target mutations remain a primary safety concern. Recent comprehensive genomic analyses indicate that while high-fidelity Cas9 variants have reduced off-target cleavage rates by up to 85% <a class="ref-link" href="#ref1">[1]</a>, undetectable macro-deletions and complex genomic rearrangements can still occur at target sites <a class="ref-link" href="#ref2">[2]</a>.</p>
+        <br>
+        <p>These unintentional genomic alterations pose theoretical risks of oncogenesis, particularly when targeting highly proliferative stem cell populations ex vivo prior to engraftment <a class="ref-link" href="#ref3">[3]</a>. To mitigate these risks, regulatory frameworks increasingly mandate orthogonal validation methods, combining in silico predictive modeling with empirical whole-genome sequencing workflows (e.g., GUIDE-seq, DISCOVER-seq) to rigorously profile the off-target landscape before clinical translation <a class="ref-link" href="#ref4">[4]</a>.</p>
+      </div>
+      <div class="answer-footer">
+        <div class="answer-source"><span class="pulse-dot"></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg> Synthesized from 12 peer-reviewed sources</div>
+        <div class="answer-actions">
+          <button id="btn-copy"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button>
+          <button id="btn-save"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></button>
+        </div>
+      </div>
+    </div>
+
+    <div class="ref-section">
+      <h2>Referenced Literature</h2>
+      <div class="ref-grid">
+        <div class="ref-card" id="ref1"><div class="ref-num">[1]</div><h4>Engineered Cas9 variants with enhanced specificity to minimize off-target effects</h4><p class="ref-author">Kleinstiver, B. P., et al.</p><p class="ref-journal">NATURE &bull; 2016</p></div>
+        <div class="ref-card" id="ref2"><div class="ref-num">[2]</div><h4>Repair of double-strand breaks induced by CRISPR–Cas9 leads to large deletions</h4><p class="ref-author">Kosicki, M., et al.</p><p class="ref-journal">NATURE BIOTECHNOLOGY &bull; 2018</p></div>
+        <div class="ref-card" id="ref3"><div class="ref-num">[3]</div><h4>p53 mutations in CRISPR-Cas9 targeted human pluripotent stem cells</h4><p class="ref-author">Ihry, R. J., et al.</p><p class="ref-journal">NATURE MEDICINE &bull; 2018</p></div>
+        <div class="ref-card" id="ref4"><div class="ref-num">[4]</div><h4>GUIDE-seq enables genome-wide profiling of off-target cleavage by CRISPR-Cas nucleases</h4><p class="ref-author">Tsai, S. Q., et al.</p><p class="ref-journal">NATURE BIOTECHNOLOGY &bull; 2015</p></div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-brand"><h4>ScholarSearch</h4><p>&copy; 2026 ScholarSearch. Temu Kembali Informasi.</p></div>
+      <div class="footer-links"><a href="#">Privacy</a><a href="#">Terms</a><a href="#">Institutional Access</a><a href="#">API</a><a href="#">Contact</a></div>
+    </div>
+  </footer>
+  <script src="/static/js/app.js"></script>
+  <script src="/static/js/citation_graph.js"></script>
+  <script>
+    // Scroll reveal
+    const obs = new IntersectionObserver((entries) => {
+      entries.forEach((e) => {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible');
+          obs.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.answer-card, .ref-card').forEach((el, i) => {
+      el.classList.add('reveal');
+      el.style.transitionDelay = (i * 0.08) + 's';
+      obs.observe(el);
+    });
+  </script>
 </body>
 </html>
+

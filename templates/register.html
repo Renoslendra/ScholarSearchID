@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Sign In — ScholarSearch ID</title>
+  <title>Buat Akun — ScholarSearch</title>
   <link rel="stylesheet" href="/static/css/style.css">
   <style>
     body.light { display: flex; flex-direction: column; min-height: 100vh; }
@@ -15,7 +15,7 @@
       min-height: calc(100vh - 60px);
     }
 
-    /* Left side — image showcase with slideshow */
+    /* Left side — image showcase */
     .auth-showcase {
       flex: 1;
       position: relative;
@@ -35,7 +35,6 @@
     }
     .showcase-slide.active { opacity: 1; }
 
-    /* Dark gradient overlay for text readability */
     .showcase-overlay {
       position: absolute;
       inset: 0;
@@ -68,7 +67,28 @@
       line-height: 1.6;
     }
 
-    /* Slide indicators */
+    /* Feature pills */
+    .showcase-features {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 16px;
+    }
+    .showcase-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      background: rgba(255,255,255,0.12);
+      backdrop-filter: blur(8px);
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 500;
+      color: rgba(255,255,255,0.9);
+      border: 1px solid rgba(255,255,255,0.15);
+    }
+    .showcase-pill svg { width: 14px; height: 14px; }
+
     .showcase-dots {
       position: absolute;
       bottom: 24px;
@@ -94,19 +114,20 @@
 
     /* Right side — form */
     .auth-form-side {
-      width: 480px;
+      width: 500px;
       flex-shrink: 0;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 48px 40px;
+      padding: 40px 40px;
       background: var(--bg-surface);
+      overflow-y: auto;
     }
 
     .auth-form-inner {
       width: 100%;
-      max-width: 360px;
+      max-width: 380px;
     }
 
     .auth-logo {
@@ -120,7 +141,7 @@
     .auth-logo span { color: var(--accent); }
 
     .auth-title {
-      font-size: 28px;
+      font-size: 26px;
       font-weight: 700;
       color: var(--text);
       margin-bottom: 4px;
@@ -130,24 +151,21 @@
     .auth-subtitle {
       font-size: 14px;
       color: var(--text-sec);
-      margin-bottom: 28px;
+      margin-bottom: 24px;
       text-align: center;
     }
 
-    /* Form inputs */
-    .auth-field {
-      margin-bottom: 16px;
-    }
+    .auth-field { margin-bottom: 14px; }
     .auth-field label {
       display: block;
       font-size: 13px;
       font-weight: 600;
       color: var(--text);
-      margin-bottom: 6px;
+      margin-bottom: 5px;
     }
     .auth-input {
       width: 100%;
-      padding: 12px 16px;
+      padding: 11px 14px;
       background: var(--bg-input);
       border: 1px solid var(--border);
       border-radius: var(--radius-md);
@@ -162,9 +180,12 @@
     }
     .auth-input::placeholder { color: var(--text-muted); }
 
+    .name-row { display: flex; gap: 12px; }
+    .name-row .auth-field { flex: 1; }
+
     .btn-auth-primary {
       width: 100%;
-      padding: 14px;
+      padding: 13px;
       background: var(--accent);
       color: #fff;
       border: none;
@@ -180,12 +201,11 @@
       transform: translateY(-1px);
     }
 
-    /* OR divider */
     .auth-divider {
       display: flex;
       align-items: center;
       gap: 12px;
-      margin: 22px 0;
+      margin: 18px 0;
     }
     .auth-divider::before,
     .auth-divider::after {
@@ -200,14 +220,13 @@
       white-space: nowrap;
     }
 
-    /* Google button */
     .btn-google-auth {
       width: 100%;
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 10px;
-      padding: 12px;
+      padding: 11px;
       background: #fff;
       border: 1px solid var(--border);
       border-radius: var(--radius-md);
@@ -229,7 +248,7 @@
 
     .auth-footer-text {
       text-align: center;
-      margin-top: 20px;
+      margin-top: 18px;
       font-size: 14px;
       color: var(--text-sec);
     }
@@ -237,43 +256,18 @@
       color: var(--accent);
       font-weight: 600;
     }
-    .auth-footer-text a:hover {
-      text-decoration: underline;
-    }
+    .auth-footer-text a:hover { text-decoration: underline; }
 
-    .auth-forgot {
-      display: block;
-      text-align: right;
-      color: var(--accent);
-      font-size: 13px;
-      font-weight: 500;
-      margin-bottom: 20px;
-      margin-top: -8px;
-    }
-    .auth-forgot:hover { text-decoration: underline; }
-
-    /* Stats row */
-    .auth-stats {
-      display: flex;
-      gap: 24px;
-      margin-top: 32px;
-      padding-top: 24px;
-      border-top: 1px solid var(--border);
-    }
-    .auth-stat {
-      text-align: center;
-    }
-    .auth-stat-value {
-      font-size: 20px;
-      font-weight: 800;
-      color: var(--accent);
-    }
-    .auth-stat-label {
-      font-size: 11px;
+    .auth-terms {
+      font-size: 12px;
       color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      margin-top: 2px;
+      text-align: center;
+      margin-top: 14px;
+      line-height: 1.5;
+    }
+    .auth-terms a {
+      color: var(--accent);
+      font-weight: 500;
     }
 
     /* Footer */
@@ -293,7 +287,6 @@
     }
     .auth-page-footer a:hover { color: var(--text); }
 
-    /* Responsive */
     @media (max-width: 900px) {
       .auth-showcase { display: none; }
       .auth-form-side { width: 100%; padding: 32px 24px; }
@@ -303,17 +296,17 @@
 <body class="light">
 
   <div class="auth-layout">
-    <!-- Left: Image Showcase with Slideshow -->
+    <!-- Left: Image Showcase -->
     <div class="auth-showcase" id="auth-showcase">
-      <div class="showcase-slide active" style="background-image:url('/static/img/campus1.png')"></div>
-      <div class="showcase-slide" style="background-image:url('/static/img/campus2.png')"></div>
+      <div class="showcase-slide active" style="background-image:url('/static/img/campus2.png')"></div>
       <div class="showcase-slide" style="background-image:url('/static/img/campus3.png')"></div>
+      <div class="showcase-slide" style="background-image:url('/static/img/campus1.png')"></div>
 
       <div class="showcase-overlay"></div>
 
       <div class="showcase-content">
-        <h2>Temukan Jutaan Paper Akademik Indonesia</h2>
-        <p>ScholarSearch menghubungkan kamu dengan ribuan jurnal dan paper akademik dari universitas terbaik di Indonesia.</p>
+        <h2>Bergabung dengan Komunitas Riset Indonesia</h2>
+        <p>Akses pencarian paper akademik presisi tinggi dan temukan referensi jurnal terbaik untuk penelitian Anda.</p>
       </div>
 
       <div class="showcase-dots" id="showcase-dots">
@@ -323,41 +316,57 @@
       </div>
     </div>
 
-    <!-- Right: Sign In Form -->
+    <!-- Right: Register Form -->
     <div class="auth-form-side">
       <div class="auth-form-inner">
-        <h1 class="auth-title">Selamat Datang!</h1>
+        <h1 class="auth-title">Buat Akun Baru</h1>
         <div class="auth-logo">Scholar<span>Search</span></div>
-        <p class="auth-subtitle">Masuk ke akun Anda untuk melanjutkan pencarian akademik.</p>
+        <p class="auth-subtitle">Mulai jelajahi jutaan paper akademik Indonesia.</p>
 
-        <!-- Google Sign In -->
-        <button class="btn-google-auth" id="btn-google">
+        <!-- Google Sign Up -->
+        <button class="btn-google-auth" id="btn-google-register">
           <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
             <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/>
             <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
             <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18A10.96 10.96 0 0 0 1 12c0 1.77.42 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
             <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
           </svg>
-          Masuk dengan Google
+          Daftar dengan Google
         </button>
 
-        <div class="auth-divider"><span>atau masuk dengan email</span></div>
+        <div class="auth-divider"><span>atau daftar dengan email</span></div>
+
+        <div class="name-row">
+          <div class="auth-field">
+            <label for="reg-firstname">Nama Depan</label>
+            <input type="text" class="auth-input" id="reg-firstname" placeholder="Nama Depan">
+          </div>
+          <div class="auth-field">
+            <label for="reg-lastname">Nama Belakang</label>
+            <input type="text" class="auth-input" id="reg-lastname" placeholder="Nama Belakang">
+          </div>
+        </div>
 
         <div class="auth-field">
-          <label for="signin-email">Email</label>
-          <input type="email" class="auth-input" id="signin-email" placeholder="nama@email.com">
+          <label for="reg-email">Email</label>
+          <input type="email" class="auth-input" id="reg-email" placeholder="nama@email.com">
         </div>
         <div class="auth-field">
-          <label for="signin-password">Kata Sandi</label>
-          <input type="password" class="auth-input" id="signin-password" placeholder="Masukkan kata sandi">
+          <label for="reg-password">Kata Sandi</label>
+          <input type="password" class="auth-input" id="reg-password" placeholder="Minimal 8 karakter">
+        </div>
+        <div class="auth-field">
+          <label for="reg-confirm">Konfirmasi Kata Sandi</label>
+          <input type="password" class="auth-input" id="reg-confirm" placeholder="Ulangi kata sandi">
         </div>
 
-        <a href="#" class="auth-forgot">Lupa kata sandi?</a>
+        <button class="btn-auth-primary" id="btn-register">Buat Akun</button>
 
-        <button class="btn-auth-primary" id="btn-signin">Masuk</button>
-
-        <p class="auth-footer-text">Belum punya akun? <a href="/register">Daftar sekarang</a></p>
-
+        <p class="auth-footer-text">Sudah punya akun? <a href="/signin">Masuk di sini</a></p>
+      </div>
+    </div>
+  </div>
+  
   <script>
     // Image slideshow
     (function(){
@@ -374,10 +383,8 @@
         dots[current].classList.add('active');
       }
 
-      // Auto-advance every 5 seconds
       setInterval(() => goTo((current + 1) % total), 5000);
 
-      // Click dots
       dots.forEach(dot => {
         dot.addEventListener('click', () => goTo(parseInt(dot.dataset.idx)));
       });

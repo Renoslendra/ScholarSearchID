@@ -3,9 +3,355 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>ScholarSearchID - Lab Mode</title>
+  <title>IR Lab — ScholarSearch</title>
+  <link rel="stylesheet" href="/static/css/style.css">
+  <style>
+    /* ===== Lab page styles ===== */
+    body.light { background: #f0f0f0; }
+
+    .lab-container {
+      padding: 40px 0;
+      width: 100%;
+    }
+
+    .lab-header {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 0 32px 32px;
+    }
+    .lab-header h1 {
+      font-size: 36px;
+      font-weight: 800;
+      color: var(--text);
+    }
+    .lab-header p {
+      font-size: 14px;
+      color: var(--text-sec);
+      margin-top: 4px;
+    }
+
+    .lab-grid {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 0 32px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .lab-panel {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      transition: border-color 0.3s ease;
+    }
+    .lab-panel:hover {
+      border-color: var(--accent);
+    }
+    .lab-panel h3 {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .lab-panel h3::before {
+      content: '';
+      width: 4px;
+      height: 18px;
+      background: var(--accent);
+      border-radius: 2px;
+    }
+
+    .lab-field {
+      margin-bottom: 18px;
+    }
+    .lab-field label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-sec);
+      margin-bottom: 6px;
+    }
+    .lab-input {
+      width: 100%;
+      padding: 10px 14px;
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      color: var(--text);
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .lab-input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-light);
+    }
+
+    /* Custom range slider */
+    input[type="range"] {
+      -webkit-appearance: none;
+      appearance: none;
+      height: 6px;
+      border-radius: 3px;
+      background: var(--border);
+      outline: none;
+      cursor: pointer;
+    }
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: var(--accent);
+      border: 3px solid var(--bg-surface);
+      box-shadow: 0 2px 6px rgba(37,99,235,0.3);
+      cursor: pointer;
+      transition: transform 0.15s;
+    }
+    input[type="range"]::-webkit-slider-thumb:hover {
+      transform: scale(1.15);
+    }
+    .slider-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 6px;
+    }
+
+    /* Checkbox group */
+    .checkbox-group {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .checkbox-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      padding: 10px 14px;
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      transition: all 0.2s;
+    }
+    .checkbox-item:hover {
+      border-color: var(--accent);
+      background: var(--accent-light);
+    }
+    .checkbox-item input { display: none; }
+    .checkmark {
+      width: 20px;
+      height: 20px;
+      border: 2px solid var(--border);
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: all 0.2s;
+    }
+    .checkmark svg { width: 14px; height: 14px; opacity: 0; transition: opacity 0.2s; }
+    .checkbox-item input:checked ~ .checkmark {
+      background: var(--accent);
+      border-color: var(--accent);
+    }
+    .checkbox-item input:checked ~ .checkmark svg { opacity: 1; color: #fff; }
+    .checkbox-label {
+      font-size: 14px;
+      color: var(--text);
+      font-weight: 500;
+    }
+
+    .btn-run {
+      width: 100%;
+      padding: 12px;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius-md);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.25s;
+      position: relative;
+      overflow: hidden;
+    }
+    .btn-run:hover {
+      background: var(--accent-hover);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(37,99,235,0.3);
+    }
+    .btn-run:active { transform: translateY(0); }
+    .btn-run:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+    /* Evaluation section (dark) */
+    .lab-eval-wrap {
+      background: #0a0a0a;
+      padding: 48px 0 56px;
+      margin-top: 48px;
+    }
+    .lab-eval-inner {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 0 32px;
+    }
+    .lab-eval-inner > h2 {
+      font-size: 28px;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 24px;
+    }
+
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+    .metric-card {
+      background: #141414;
+      border: 1px solid #1f1f1f;
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      text-align: center;
+      transition: border-color 0.3s, transform 0.3s;
+    }
+    .metric-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-3px);
+    }
+    .metric-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: #71717a;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin-bottom: 8px;
+    }
+    .metric-value {
+      font-size: 28px;
+      font-weight: 800;
+      color: #fff;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .chart-container {
+      background: #141414;
+      border: 1px solid #1f1f1f;
+      border-radius: var(--radius-lg);
+      padding: 24px;
+    }
+    .chart-container h4 {
+      font-size: 15px;
+      font-weight: 600;
+      color: #fff;
+      margin-bottom: 16px;
+    }
+
+    /* Scroll reveal */
+    .reveal { opacity: 0; transform: translateY(16px); transition: opacity 0.5s ease, transform 0.5s ease; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    @media (max-width: 768px) {
+      .lab-grid { grid-template-columns: 1fr; }
+      .metrics-grid { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
 </head>
-<body>
-  <h1>IR Lab Mode</h1>
+<body class="light">
+  <nav class="navbar">
+    <a href="/" class="navbar-logo">ScholarSearch</a>
+    <ul class="navbar-nav">
+      <li><a href="/search">Search</a></li>
+      <li><a href="/citation">Answer</a></li>
+      <li><a href="/library">Library</a></li>
+      <li><a href="/lab" class="active">Lab</a></li>
+    </ul>
+    <div class="navbar-right">
+      <button class="btn-signin" onclick="location.href='/signin'">Sign In</button>
+    </div>
+  </nav>
+
+  <div class="lab-container">
+    <div class="lab-header">
+      <h1>IR Lab</h1>
+      <p>Experiment with retrieval models and evaluate performance metrics.</p>
+    </div>
+    <div class="lab-grid">
+      <div class="lab-panel">
+        <h3>Retrieval Configuration</h3>
+        <div class="lab-field">
+          <label for="topk">Top-K Results</label>
+          <input type="number" class="lab-input" id="topk" value="10" min="1" max="100">
+        </div>
+        <div class="lab-field">
+          <label>Similarity Threshold</label>
+          <input type="range" id="threshold" min="0" max="100" value="75" style="width:100%;">
+          <div class="slider-labels"><span>0.0</span><span>0.75</span><span>1.0</span></div>
+        </div>
+        <div class="lab-field">
+          <label for="rerank">Re-ranking Weight</label>
+          <input type="text" class="lab-input" id="rerank" value="0.45">
+        </div>
+      </div>
+      <div class="lab-panel">
+        <h3>Model Selection</h3>
+        <div class="checkbox-group">
+          <label class="checkbox-item"><input type="checkbox" name="model" value="bm25" checked><span class="checkmark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span><span class="checkbox-label">BM25 Baseline</span></label>
+          <label class="checkbox-item"><input type="checkbox" name="model" value="dense" checked><span class="checkmark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span><span class="checkbox-label">Dense Retriever (BERT)</span></label>
+          <label class="checkbox-item"><input type="checkbox" name="model" value="colbert"><span class="checkmark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span><span class="checkbox-label">ColBERTv2 Late Interaction</span></label>
+          <label class="checkbox-item"><input type="checkbox" name="model" value="hybrid"><span class="checkmark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span><span class="checkbox-label">Hybrid Search (BM25 + Dense)</span></label>
+        </div>
+        <button class="btn-run" id="btn-run">Run Evaluation</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Dark evaluation section -->
+  <div class="lab-eval-wrap">
+    <div class="lab-eval-inner">
+      <h2>Evaluation Results</h2>
+      <div class="metrics-grid" id="metrics-grid">
+        <div class="metric-card"><div class="metric-label">MAP@10</div><div class="metric-value" id="metric-map">0.684</div></div>
+        <div class="metric-card"><div class="metric-label">NDCG@10</div><div class="metric-value" id="metric-ndcg">0.712</div></div>
+        <div class="metric-card"><div class="metric-label">MRR</div><div class="metric-value" id="metric-mrr">0.805</div></div>
+        <div class="metric-card"><div class="metric-label">RECALL@100</div><div class="metric-value" id="metric-recall">0.941</div></div>
+      </div>
+      <div class="chart-container"><h4>Precision-Recall Curve</h4><canvas id="pr-chart" width="800" height="260"></canvas></div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-brand"><h4>ScholarSearch</h4><p>&copy; 2026 ScholarSearch. Temu Kembali Informasi.</p></div>
+      <div class="footer-links"><a href="#">Privacy</a><a href="#">Terms</a><a href="#">Institutional Access</a><a href="#">API</a><a href="#">Contact</a></div>
+    </div>
+  </footer>
+  <script src="/static/js/app.js"></script>
+  <script src="/static/js/lab.js"></script>
+  <script>
+    // Scroll reveal
+    const obs = new IntersectionObserver((entries) => {
+      entries.forEach((e) => {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible');
+          obs.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.lab-panel, .metric-card, .chart-container').forEach((el, i) => {
+      el.classList.add('reveal');
+      el.style.transitionDelay = (i * 0.07) + 's';
+      obs.observe(el);
+    });
+  </script>
 </body>
 </html>

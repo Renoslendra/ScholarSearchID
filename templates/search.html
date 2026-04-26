@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Search Results — ScholarSearch</title>
+  <link rel="stylesheet" href="/static/css/style.css">
+  <style>
+    /* Dark theme overrides for search results */
+    .results-container { background: var(--bg); }
+    .query-text { color: #fff; }
+
+    /* Scroll reveal */
+    .reveal { opacity: 0; transform: translateY(18px); transition: opacity 0.5s ease, transform 0.5s ease; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    .result-card {
+      background: var(--bg-surface);
+      border-color: var(--border);
+      border-left: 3px solid transparent;
+      transition: all 0.25s ease;
+    }
+    .result-card:hover {
+      border-color: var(--border);
+      border-left-color: var(--accent);
+      box-shadow: 0 8px 28px rgba(37,99,235,0.1);
+      transform: translateX(4px);
+    }
+    .result-card h3 a { color: var(--text-link); transition: color 0.15s; }
+    .result-card h3 a:hover { color: #93c5fd; }
+
+    .result-meta span { color: var(--text-muted); }
+    .result-abstract { color: var(--text-sec); }
+
+    .badge {
+      background: rgba(37,99,235,0.1);
+      color: var(--text-link);
+      border-color: rgba(37,99,235,0.15);
+    }
+
+    .view-paper { color: var(--text-link); transition: gap 0.2s; display: inline-flex; align-items: center; gap: 4px; }
+    .view-paper:hover { color: #93c5fd; gap: 8px; }
+
+    .filter-btn {
+      background: var(--bg-surface-2);
+      border-color: var(--border);
+      color: var(--text-sec);
+    }
+    .filter-btn:hover { border-color: var(--accent); color: var(--text); }
+
+    .page-btn {
+      background: var(--bg-surface);
+      border-color: var(--border);
+      color: var(--text-sec);
+      transition: all 0.2s ease;
+    }
+    .page-btn:hover:not(.disabled):not(.active) {
+      border-color: var(--accent);
+      color: var(--text);
+      transform: translateY(-1px);
+    }
+    .page-btn.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+
+    .results-count { color: var(--text-muted); }
+    .footer { background: var(--bg-surface); border-top-color: var(--border); }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <a href="/" class="navbar-logo">ScholarSearch</a>
+    <ul class="navbar-nav">
+      <li><a href="/search" class="active">Search</a></li>
+      <li><a href="/citation">Answer</a></li>
+      <li><a href="/library">Library</a></li>
+      <li><a href="/lab">Lab</a></li>
+    </ul>
+    <div class="navbar-right">
+      <div class="navbar-search">
+        <input type="text" id="nav-search" placeholder="Search...">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      </div>
+      <button class="btn-signin" onclick="location.href='/signin'">Sign In</button>
+    </div>
+  </nav>
+
+  <main class="results-container" style="padding-top:32px;">
+    <p class="results-count">Showing results for</p>
+    <h1 class="query-text" id="query-text">"quantum entanglement in photosynthetic complexes"</h1>
+    <div style="display:flex;align-items:center;gap:12px;margin-top:8px;">
+      <span class="results-count">About 4,200 results (0.12 seconds)</span>
+      <button class="filter-btn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="11" y1="18" x2="13" y2="18"/></svg>
+        Filters
+      </button>
+    </div>
+
+    <div id="results-list" style="margin-top:24px;">
+      <article class="result-card">
+        <h3><a href="#">Evidence for wavelike energy transfer through quantum coherence in photosynthetic systems</a></h3>
+        <div class="result-meta"><span>G.S. Engel, T.R. Calhoun, E.L. Read, et al.</span><span class="dot">·</span><span>Nature</span><span class="dot">·</span><span>2007</span></div>
+        <p class="result-abstract">Photosynthetic complexes are exquisitely tuned to capture solar light efficiently, then transmit the excitation energy to reaction centres, where long term energy storage is initiated. The energy transfer mechanism is often described by semiclassical models that invoke 'hopping' of excited-state populations along discrete energy levels. Two-dimensional electronic spectroscopy of the Fenna-Matthews-Olson (FMO) bacteriochlorophyll complex reveals direct evidence for remarkably long-lived wavelike electronic quantum coherence playing an important part in energy transfer processes...</p>
+        <div class="result-footer">
+          <div class="result-badges"><span class="badge">BM25: 98.4</span><span class="badge">Citations: 4,512</span></div>
+          <a href="#" class="view-paper">View paper <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></a>
+        </div>
+      </article>
+
+      <article class="result-card">
+        <h3><a href="#">Quantum biology: Introduction</a></h3>
+        <div class="result-meta"><span>P. Ball</span><span class="dot">·</span><span>Nature Physics</span><span class="dot">·</span><span>2011</span></div>
+        <p class="result-abstract">The idea that quantum mechanics might play a fundamental role in biology is not new. But recent experiments on light-harvesting complexes have provided the first direct evidence for quantum coherence in biological systems at physiological temperatures. This raises the intriguing possibility that natural selection has found ways to exploit non-trivial quantum effects to optimize biological functions, such as energy transfer in photosynthesis and magnetoreception in birds...</p>
+        <div class="result-footer">
+          <div class="result-badges"><span class="badge">BM25: 87.2</span><span class="badge">Citations: 1,204</span></div>
+          <a href="#" class="view-paper">View paper <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></a>
+        </div>
+      </article>
+
+      <article class="result-card">
+        <h3><a href="#">Coherent Intradimer Dynamics and Contradictory Interpretations of Two-Dimensional Electronic Spectra of Photosynthetic Light-Harvesting Complexes</a></h3>
+        <div class="result-meta"><span>D. Hayes, G.B. Griffin, G.S. Engel</span><span class="dot">·</span><span>Science</span><span class="dot">·</span><span>2013</span></div>
+        <p class="result-abstract">The observation of long-lived coherent oscillations in two-dimensional electronic spectra of photosynthetic complexes has sparked intense debate regarding their physical origin and functional significance. We present a detailed theoretical analysis of intradimer dynamics, demonstrating that vibronic coupling plays a crucial role in sustaining these coherences. Our results suggest that the standard purely electronic interpretation must be revised to account for the complex interplay between electronic and vibrational degrees of freedom...</p>
+        <div class="result-footer">
+          <div class="result-badges"><span class="badge">BM25: 84.5</span><span class="badge">Citations: 856</span></div>
+          <a href="#" class="view-paper">View paper <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></a>
+        </div>
+      </article>
+    </div>
+
+    <div class="pagination">
+      <button class="page-btn disabled"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg></button>
+      <button class="page-btn active">1</button>
+      <button class="page-btn">2</button>
+      <button class="page-btn">3</button>
+      <span class="page-ellipsis">...</span>
+      <button class="page-btn">10</button>
+      <button class="page-btn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></button>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-brand"><h4>ScholarSearch</h4><p>&copy; 2026 ScholarSearch. Temu Kembali Informasi.</p></div>
+      <div class="footer-links"><a href="#">Privacy</a><a href="#">Terms</a><a href="#">Institutional Access</a><a href="#">API</a><a href="#">Contact</a></div>
+    </div>
+  </footer>
+  <script src="/static/js/app.js"></script>
+  <script src="/static/js/search.js"></script>
+  <script>
+    // Scroll reveal for result cards
+    const obs = new IntersectionObserver((entries) => {
+      entries.forEach((e, i) => {
+        if (e.isIntersecting) {
+          setTimeout(() => e.target.classList.add('visible'), i * 80);
+          obs.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.result-card, .pagination').forEach(el => {
+      el.classList.add('reveal');
+      obs.observe(el);
+    });
+  </script>
+</body>
+</html>
