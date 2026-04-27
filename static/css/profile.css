@@ -47,32 +47,33 @@
 .profile-value--bio{min-height:140px;align-items:flex-start;line-height:1.7}
 
 /* ===== EDIT PROFILE PAGE ===== */
-.edit-profile-container{display:flex;max-width:1100px;margin:0 auto;padding:0 32px 48px;width:100%;min-height:calc(100vh - var(--nav-h) - 120px);gap:0}
+/* Container Utama: Diubah jadi bentuk Card dengan shadow tipis */
+.edit-profile-container{display:flex;align-items:stretch;max-width:1000px;margin:40px auto;padding:0;width:100%;min-height:700px;background:var(--bg-surface);border:1px solid var(--border);border-radius:var(--radius-lg);box-shadow:0 8px 32px rgba(0,0,0,.04);overflow:hidden;}
 
-/* Sidebar */
-.edit-sidebar{width:280px;flex-shrink:0;border-right:1px solid var(--border);padding:32px 32px 32px 0;display:flex;flex-direction:column;align-items:center}
-.sidebar-title{font-size:18px;font-weight:700;color:var(--text);align-self:flex-start;margin-bottom:28px}
+/* Sidebar Kiri: Garis sampai bawah & beda warna background */
+.edit-sidebar{width:280px;flex-shrink:0;border-right:1px solid var(--border);background:var(--bg-surface-2);padding:40px 32px;display:flex;flex-direction:column;align-items:center}
+.sidebar-title{font-size:14px;color:var(--text-sec);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:32px;text-align:center;width:100%;font-weight:700}
 .sidebar-avatar{margin-bottom:24px}
-.profile-avatar-xl{width:200px;height:200px;border-radius:50%;background:#6b7280;color:#fff;display:flex;align-items:center;justify-content:center;font-size:72px;font-weight:700;box-shadow:0 4px 16px rgba(0,0,0,.1)}
+.profile-avatar-xl{width:160px;height:160px;border-radius:50%;background:#6b7280;color:#fff;display:flex;align-items:center;justify-content:center;font-size:64px;font-weight:700;box-shadow:0 4px 16px rgba(0,0,0,.1)}
 
 .btn-upload{width:100%;padding:12px;background:var(--accent);color:#fff;border:none;border-radius:var(--radius-md);font-size:14px;font-weight:600;cursor:pointer;transition:background var(--tr);margin-bottom:12px}
 .btn-upload:hover{background:var(--accent-hover)}
 
-.btn-change-pw{width:100%;padding:12px;background:var(--accent);color:#fff;border:none;border-radius:var(--radius-md);font-size:14px;font-weight:600;cursor:pointer;transition:background var(--tr)}
-.btn-change-pw:hover{background:var(--accent-hover)}
+.btn-change-pw{width:100%;padding:12px;background:transparent;color:var(--text-sec);border:1px solid var(--border);border-radius:var(--radius-md);font-size:14px;font-weight:600;cursor:pointer;transition:all var(--tr)}
+.btn-change-pw:hover{background:var(--bg-elevated);color:var(--text)}
 
 /* Password form */
 .pw-form{width:100%;margin-top:20px}
 .pw-field{margin-bottom:14px}
 .pw-field label{display:block;font-size:13px;font-weight:600;color:var(--text);margin-bottom:6px}
-.pw-input{width:100%;padding:10px 14px;background:var(--bg-surface-2);border:1px solid var(--border);border-radius:var(--radius-md);color:var(--text);font-size:14px;outline:none;transition:border-color var(--tr)}
+.pw-input{width:100%;padding:10px 14px;background:var(--bg-input);border:1px solid var(--border);border-radius:var(--radius-md);color:var(--text);font-size:14px;outline:none;transition:border-color var(--tr)}
 .pw-input:focus{border-color:var(--accent)}
 .btn-save-pw{width:100%;padding:12px;background:var(--accent);color:#fff;border:none;border-radius:var(--radius-md);font-size:14px;font-weight:600;cursor:pointer;transition:background var(--tr);margin-top:4px}
 .btn-save-pw:hover{background:var(--accent-hover)}
 
-/* Edit form section */
-.edit-form-section{flex:1;padding:32px 0 32px 40px}
-.edit-form-title{font-size:22px;font-weight:700;color:var(--text);margin-bottom:28px}
+/* Edit form section (Kanan) */
+.edit-form-section{flex:1;padding:40px 48px;background:var(--bg-surface)}
+.edit-form-title{font-size:22px;font-weight:700;color:var(--text);margin-bottom:32px}
 
 .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px 32px}
 .form-field label{display:block;font-size:13px;font-weight:600;color:var(--text);margin-bottom:6px}
@@ -84,7 +85,7 @@
 .form-textarea:focus{border-color:var(--accent)}
 .form-textarea::placeholder{color:var(--text-muted)}
 
-.form-actions{display:flex;justify-content:flex-end;margin-top:28px}
+.form-actions{display:flex;justify-content:flex-end;margin-top:32px}
 .btn-save-profile{padding:12px 40px;background:var(--accent);color:#fff;border:none;border-radius:var(--radius-md);font-size:15px;font-weight:600;cursor:pointer;transition:background var(--tr)}
 .btn-save-profile:hover{background:var(--accent-hover)}
 
@@ -94,11 +95,14 @@
   .profile-grid{grid-template-columns:1fr}
   .profile-header{flex-direction:column;align-items:flex-start;gap:16px}
   .profile-header-left{align-items:center}
-  .edit-profile-container{flex-direction:column;padding:0 16px 48px}
-  .edit-sidebar{width:100%;border-right:none;border-bottom:1px solid var(--border);padding:24px 0;flex-direction:column;align-items:center}
+  
+  /* Responsive Edit Container */
+  .edit-profile-container{flex-direction:column;margin:24px 16px;width:auto;}
+  .edit-sidebar{width:100%;border-right:none;border-bottom:1px solid var(--border);padding:32px 24px;}
+  .edit-form-section{padding:32px 24px}
+  
   .sidebar-title{align-self:center}
   .profile-avatar-xl{width:140px;height:140px;font-size:52px}
-  .edit-form-section{padding:24px 0 0 0}
   .form-grid{grid-template-columns:1fr}
   .user-name{display:none}
 }
