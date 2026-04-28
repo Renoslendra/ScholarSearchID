@@ -241,6 +241,35 @@ input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;hei
 .signin-card .signup{text-align:center;margin-top:16px;font-size:14px;color:var(--text-sec)}
 .signin-card .signup a{color:var(--accent);font-weight:500}
 
+/* Password Toggle Wrapper */
+.password-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.password-wrapper .auth-input {
+  padding-right: 40px; /* Kasih ruang di kanan biar teks gak nabrak ikon */
+}
+
+.btn-toggle-password {
+  position: absolute;
+  right: 12px;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s ease;
+}
+
+.btn-toggle-password:hover {
+  color: var(--accent);
+}
+
 /* ===== FOOTER ===== */
 .footer{border-top:1px solid var(--border);padding:24px 32px;margin-top:auto}
 .footer-inner{max-width:var(--max-w);margin:0 auto;display:flex;align-items:center;justify-content:space-between}
