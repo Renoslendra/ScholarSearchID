@@ -79,6 +79,7 @@
       <h2 class="edit-form-title">Edit Profil Information</h2>
 
       <form class="edit-form" id="edit-profile-form">
+        
         <div class="form-grid">
           <div class="form-field">
             <label for="edit-firstname">First Name</label>
@@ -92,20 +93,32 @@
             <label for="edit-username">Username</label>
             <input type="text" id="edit-username" class="form-input" placeholder="Username">
           </div>
+          
           <div class="form-field">
             <label for="edit-gender">Gender</label>
-            <input type="text" id="edit-gender" class="form-input" placeholder="Gender">
+            <select id="edit-gender" class="form-input form-select">
+              <option value="" disabled selected>Pilih Gender...</option>
+              <option value="Laki-laki">Laki-laki</option>
+              <option value="Perempuan">Perempuan</option>
+            </select>
           </div>
+          
           <div class="form-field">
             <label for="edit-country">Country</label>
             <input type="text" id="edit-country" class="form-input" placeholder="Country">
           </div>
+          
           <div class="form-field">
             <label for="edit-role">Role</label>
-            <input type="text" id="edit-role" class="form-input" placeholder="Role">
+            <select id="edit-role" class="form-input form-select">
+              <option value="" disabled selected>Pilih Role...</option>
+              <option value="Student">Student (Mahasiswa)</option>
+              <option value="Lecturer">Lecturer (Dosen)</option>
+              <option value="Researcher">Researcher (Peneliti)</option>
+              <option value="Public">Public (Umum)</option>
+            </select>
           </div>
-        </div>
-
+        </div> 
         <div class="form-field form-field--full">
           <label for="edit-about">About Me</label>
           <textarea id="edit-about" class="form-textarea" placeholder="Tell us about yourself..." rows="6"></textarea>
@@ -116,7 +129,7 @@
         </div>
       </form>
     </section>
-  </main>
+    </main>
 
   <script src="/static/js/app.js"></script>
   <script src="/static/js/profile.js"></script>
