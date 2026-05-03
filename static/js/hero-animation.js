@@ -31,20 +31,117 @@
   const NODE_COLORS = [ACCENT, ACCENT_LT, CYAN, INDIGO, EMERALD];
 
   // Phrase themes — each phrase gets its own accent color
-  const PHRASE_THEMES = [
-    {
-      text: 'ScholarSearch Indonesia',
-      color: '#60a5fa',                        // sky blue
-      glow: 'rgba(96,165,250,',
-      hue: 215,
-    },
-    {
-      text: 'Jurnal Teknik Informatika',
-      color: '#34d399',                        // emerald green
-      glow: 'rgba(52,211,153,',
-      hue: 160,
-    },
-  ];
+/* =========================================================
+   DECRYPTED TEXT + SHINY TEXT LOGIC
+   ========================================================= */
+const PHRASE_THEMES = [
+  {
+    text: 'Scholar Search Indonesia',
+    color: '#60a5fa',                        // sky blue
+    glow: 'rgba(96,165,250,',
+  },
+  {
+    text: 'Jurnal Teknik Informatika',
+    color: '#34d399',                        // emerald green
+    glow: 'rgba(52,211,153,',
+  },
+];
+
+class Decryptor {
+  constructor(element) {
+    this.element = element;
+    // Karakter yang dipakai buat ngacak tulisan
+    this.chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@#$*&%";
+    this.queue = [];
+    this.frame = 0;
+    this.frameRequest = null;
+  }
+
+  setText(newText) {
+    const oldText = this.element.innerText || '';
+    const length = Math.max(oldText.length, newText.length);
+    const promise = new Promise((resolve) => this.resolve = resolve);
+    
+    this.queue = [];
+    for (let i = 0; i < length; i++) {
+      const from = oldText[i] || '';
+      const to = newText[i] || '';
+      // Kecepatan dekripsi (acak)
+      const start = Math.floor(Math.random() * 40); 
+      const end = start + Math.floor(Math.random() * 40);
+      this.queue.push({ from, to, start, end, char: '' });
+    }
+    
+    cancelAnimationFrame(this.frameRequest);
+    this.frame = 0;
+    this.update();
+    return promise;
+  }
+
+  update() {
+    let output = '';
+    let complete = 0;
+
+    for (let i = 0, n = this.queue.length; i < n; i++) {
+      let { from, to, start, end, char } = this.queue[i];
+      
+      if (this.frame >= end) {
+        complete++;
+        output += to; // Teks asli terkunci
+      } else if (this.frame >= start) {
+        if (!char || Math.random() < 0.28) {
+          char = this.randomChar();
+          this.queue[i].char = char;
+        }
+        output += `<span class="scrambled-char">${char}</span>`; 
+      } else {
+        output += from;
+      }
+    }
+
+    this.element.innerHTML = output;
+
+    if (complete === this.queue.length) {
+      this.resolve();
+    } else {
+      this.frameRequest = requestAnimationFrame(this.update.bind(this));
+      this.frame++;
+    }
+  }
+
+  randomChar() {
+    return this.chars[Math.floor(Math.random() * this.chars.length)];
+  }
+}
+
+// Eksekusi Animasi
+document.addEventListener('DOMContentLoaded', () => {
+  const targetEl = document.getElementById('decrypted-text');
+  
+  if (targetEl) {
+    const decryptor = new Decryptor(targetEl);
+    let currentIndex = 0;
+
+    async function cycleText() {
+      const theme = PHRASE_THEMES[currentIndex];
+
+      // Ganti variabel warna CSS sesuai tema
+      targetEl.style.setProperty('--theme-color', theme.color);
+      targetEl.style.setProperty('--glow-color', theme.glow + '0.6)');
+
+      // Jalankan efek dekripsi teks
+      await decryptor.setText(theme.text);
+
+      // Jeda 3.5 detik, lalu pindah ke kata berikutnya
+      setTimeout(() => {
+        currentIndex = (currentIndex + 1) % PHRASE_THEMES.length;
+        cycleText();
+      }, 3500); 
+    }
+
+    cycleText();
+  }
+});
 
   const PARTICLE_COUNT = 70;
   const CONNECT_DIST   = 170;
