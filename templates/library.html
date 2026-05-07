@@ -8,8 +8,16 @@
   <link rel="stylesheet" href="/static/css/style.css">
   <style>
     /* Scroll reveal */
-    .reveal { opacity: 0; transform: translateY(18px); transition: opacity 0.5s ease, transform 0.5s ease; }
-    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .reveal {
+      opacity: 0;
+      transform: translateY(18px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
 
     /* Header */
     .library-header {
@@ -17,12 +25,14 @@
       margin: 0 auto;
       padding: 44px 32px 12px;
     }
+
     .library-header h1 {
       font-size: 34px;
       font-weight: 800;
       color: var(--text);
       margin-bottom: 4px;
     }
+
     .library-header p {
       font-size: 15px;
       color: var(--text-sec);
@@ -30,25 +40,29 @@
 
     /* Sections */
     .collections-section {
-      background: #f0f0f0;
+      background: var(--bg-surface-2, #f0f0f0);
       padding: 28px 0 32px;
     }
+
     .collections-section .section-inner {
       max-width: 1200px;
       margin: 0 auto;
       padding: 0 32px;
     }
+
     .saved-section {
       max-width: var(--max-w);
       margin: 0 auto;
       padding: 36px 32px 48px;
     }
+
     .section-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
       margin-bottom: 18px;
     }
+
     .section-header h2 {
       font-size: 20px;
       font-weight: 700;
@@ -70,10 +84,11 @@
       cursor: pointer;
       transition: all 0.2s ease;
     }
+
     .btn-new:hover {
       background: var(--accent-hover);
       transform: translateY(-1px);
-      box-shadow: 0 4px 14px rgba(37,99,235,0.25);
+      box-shadow: 0 4px 14px rgba(37, 99, 235, 0.25);
     }
 
     /* Collection cards grid */
@@ -82,6 +97,7 @@
       grid-template-columns: repeat(3, 1fr);
       gap: 22px;
     }
+
     .collection-card {
       background: var(--bg-surface);
       border: 1px solid var(--border);
@@ -90,29 +106,35 @@
       cursor: pointer;
       transition: all 0.3s ease;
     }
+
     .collection-card:hover {
       border-color: var(--accent);
       transform: translateY(-4px);
-      box-shadow: 0 10px 28px rgba(37,99,235,0.1);
+      box-shadow: 0 10px 28px rgba(37, 99, 235, 0.1);
     }
+
     .collection-thumb {
       height: 180px;
       background-size: cover;
       background-position: center;
       transition: transform 0.4s ease;
     }
+
     .collection-card:hover .collection-thumb {
       transform: scale(1.06);
     }
+
     .collection-info {
       padding: 16px 25px;
     }
+
     .collection-info h4 {
       font-size: 17px;
       font-weight: 700;
       color: var(--text);
       margin-bottom: 5px;
     }
+
     .paper-count {
       display: flex;
       align-items: center;
@@ -120,7 +142,10 @@
       font-size: 13px;
       color: var(--text-muted);
     }
-    .paper-count svg { color: var(--accent); }
+
+    .paper-count svg {
+      color: var(--accent);
+    }
 
     /* Filter button */
     .filter-btn {
@@ -137,8 +162,16 @@
       cursor: pointer;
       transition: all 0.2s;
     }
-    .filter-btn:hover { border-color: var(--accent); color: var(--text); }
-    .filter-btn svg { width: 16px; height: 16px; }
+
+    .filter-btn:hover {
+      border-color: var(--accent);
+      color: var(--text);
+    }
+
+    .filter-btn svg {
+      width: 16px;
+      height: 16px;
+    }
 
     /* Saved paper cards */
     .saved-card {
@@ -146,19 +179,26 @@
       align-items: flex-start;
       justify-content: space-between;
       background: var(--bg-surface);
-      border: 1px solid var(--border);
+      border: 2px solid #cbd5e1; /* <-- Garis card dipertebal (2px) */
       border-left: 3px solid transparent;
       border-radius: var(--radius-lg);
       padding: 18px 22px;
       margin-bottom: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04); /* Memberi sedikit dimensi */
       transition: all 0.25s ease;
     }
+
     .saved-card:hover {
+      border-color: var(--accent);
       border-left-color: var(--accent);
-      box-shadow: 0 6px 20px rgba(0,0,0,0.05);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
       transform: translateX(3px);
     }
-    .saved-content { flex: 1; }
+
+    .saved-content {
+      flex: 1;
+    }
+
     .saved-content h3 {
       font-size: 16px;
       font-weight: 700;
@@ -166,7 +206,11 @@
       margin-bottom: 5px;
       transition: color 0.2s;
     }
-    .saved-card:hover .saved-content h3 { color: var(--accent); }
+
+    .saved-card:hover .saved-content h3 {
+      color: var(--accent);
+    }
+
     .saved-content .desc {
       font-size: 14px;
       color: var(--text-sec);
@@ -175,7 +219,12 @@
     }
 
     /* Tags */
-    .saved-tags { display: flex; gap: 6px; margin-bottom: 8px; }
+    .saved-tags {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 8px;
+    }
+
     .tag {
       display: inline-block;
       padding: 3px 10px;
@@ -186,19 +235,30 @@
       color: var(--text-muted);
       border: 1px solid var(--border);
     }
+
     .tag.cs {
-      background: rgba(37,99,235,0.08);
+      background: rgba(37, 99, 235, 0.08);
       color: var(--accent);
-      border-color: rgba(37,99,235,0.18);
-    }
-    .tag.physics {
-      background: rgba(124,58,237,0.08);
-      color: #7c3aed;
-      border-color: rgba(124,58,237,0.18);
+      border-color: rgba(37, 99, 235, 0.18);
     }
 
-    .authors { font-size: 13px; color: var(--text-muted); margin-right: 14px; }
-    .citations { font-size: 13px; color: var(--accent); font-weight: 600; }
+    .tag.physics {
+      background: rgba(124, 58, 237, 0.08);
+      color: #7c3aed;
+      border-color: rgba(124, 58, 237, 0.18);
+    }
+
+    .authors {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-right: 14px;
+    }
+
+    .citations {
+      font-size: 13px;
+      color: var(--accent);
+      font-weight: 600;
+    }
 
     /* Action buttons */
     .saved-actions {
@@ -207,6 +267,7 @@
       gap: 6px;
       margin-left: 14px;
     }
+
     .saved-actions button {
       display: flex;
       align-items: center;
@@ -220,150 +281,144 @@
       cursor: pointer;
       transition: all 0.2s;
     }
+
     .saved-actions button:hover {
       border-color: var(--accent);
       color: var(--accent);
       transform: scale(1.08);
     }
 
+    /* ── Saved AI Answers ── */
+    .saved-answer-card {
+      background: var(--bg-surface);
+      border: 2px solid #cbd5e1;
+      border-left: 3px solid var(--accent);
+      border-radius: var(--radius-lg);
+      padding: 18px 22px;
+      margin-bottom: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+      transition: all 0.25s ease;
+      cursor: pointer;
+    }
+    .saved-answer-card:hover {
+      box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+      transform: translateX(3px);
+    }
+    .sa-header { display:flex; justify-content:space-between; align-items:flex-start; gap:12px; }
+    .sa-question { font-size:15px; font-weight:700; color:var(--text); flex:1; }
+    .sa-meta { display:flex; align-items:center; gap:10px; margin-top:8px; font-size:12px; color:var(--text-muted); }
+    .sa-badge { background:var(--accent); color:#fff; padding:2px 8px; border-radius:6px; font-size:11px; font-weight:600; }
+    .sa-body { display:none; margin-top:14px; font-size:14px; color:var(--text-sec); line-height:1.7; border-top:1px solid var(--border); padding-top:14px; }
+    .sa-body.open { display:block; }
+    .sa-delete { background:none; border:none; color:var(--text-muted); cursor:pointer; padding:4px; transition:color .2s; }
+    .sa-delete:hover { color:#ef4444; }
+
     @media (max-width: 768px) {
-      .collections-grid { grid-template-columns: 1fr; }
-      .saved-card { flex-direction: column; }
-      .saved-actions { flex-direction: row; margin-left: 0; margin-top: 10px; }
+      .collections-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .saved-card {
+        flex-direction: column;
+      }
+
+      .saved-actions {
+        flex-direction: row;
+        margin-left: 0;
+        margin-top: 10px;
+      }
     }
   </style>
+  <link rel="icon" type="image/png" href="/static/img/logoscholarsearch.png">
 </head>
 
 <body class="light">
   <nav class="navbar">
-    <a href="/" class="navbar-logo">ScholarSearch</a>
+    <a href="/" class="navbar-logo" style="display:flex;align-items:center;gap:8px;"><img src="/static/img/logoscholarsearch.png"
+        alt="Logo" style="height:24px;width:24px;border-radius:6px;box-shadow:0 0 10px rgba(139,92,246,0.3);">
+      ScholarSearch</a>
     <ul class="navbar-nav">
-      <li><a href="/search">Search</a></li>
-      <li><a href="/citation">Answer</a></li>
-      <li><a href="/library" class="active">Library</a></li>
-      <li><a href="/lab">Lab</a></li>
+      <li><a href="/search" data-i18n="nav.search">Search</a></li>
+      <li><a href="/citation" data-i18n="nav.answer">Answer</a></li>
+      <li><a href="/library" class="active" data-i18n="nav.library">Library</a></li>
+      <li><a href="/lab" data-i18n="nav.lab">Lab</a></li>
     </ul>
     <div class="navbar-right">
       <div class="navbar-search">
-        <input type="text" placeholder="Search...">
+        <input type="text" placeholder="Search..." data-i18n-ph="nav.search_placeholder">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <circle cx="11" cy="11" r="8" />
           <line x1="21" y1="21" x2="16.65" y2="16.65" />
         </svg>
       </div>
-      <button class="btn-signin" onclick="location.href='/signin'">Sign In</button>
+      {% if user %}
+      <div class="user-profile-nav" style="display:flex;align-items:center;cursor:pointer;"
+        onclick="location.href='/profile'">
+        {% if user.profile_photo %}
+        <div class="user-avatar"
+          style="width:32px;height:32px;border-radius:50%;background-image:url('{{ user.profile_photo }}');background-size:cover;background-position:center;">
+        </div>
+        {% else %}
+        <div class="user-avatar"
+          style="width:32px;height:32px;border-radius:50%;background:var(--accent);color:white;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:14px;">
+          {{ user.firstname[0] }}</div>
+        {% endif %}
+        <span style="color:var(--text);margin-left:8px;font-size:14px;font-weight:500;">{{ user.firstname }}</span>
+      </div>
+      {% else %}
+      <button class="btn-signin" onclick="location.href='/signin'" data-i18n="nav.signin">Sign In</button>
+      {% endif %}
     </div>
   </nav>
 
   <div class="library-header">
-    <h1>Library</h1>
-    <p>Organize and explore your curated academic collections.</p>
+    <h1 data-i18n="library.title">Library</h1>
+    <p data-i18n="library.subtitle">Daftar paper yang Anda simpan untuk dibaca kembali.</p>
   </div>
 
-  <section class="collections-section">
-    <div class="section-inner">
-      <div class="section-header">
-        <h2>Collections</h2>
-        <button class="btn-new">New Collection</button>
-      </div>
-      <div class="collections-grid">
-        <div class="collection-card">
-          <div class="collection-thumb"
-            style="background-image:url('https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=400&h=200&fit=crop')">
-          </div>
-          <div class="collection-info">
-            <h4>Quantum Physics</h4>
-            <p class="paper-count"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                stroke-width="2">
-                <rect x="3" y="3" width="7" height="7" />
-                <rect x="14" y="3" width="7" height="7" />
-                <rect x="3" y="14" width="7" height="7" />
-                <rect x="14" y="14" width="7" height="7" />
-              </svg> 42 Papers</p>
-          </div>
-        </div>
-        <div class="collection-card">
-          <div class="collection-thumb"
-            style="background-image:url('https://images.unsplash.com/photo-1555949963-aa79dcee981c?w=400&h=200&fit=crop')">
-          </div>
-          <div class="collection-info">
-            <h4>Machine Learning</h4>
-            <p class="paper-count"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                stroke-width="2">
-                <rect x="3" y="3" width="7" height="7" />
-                <rect x="14" y="3" width="7" height="7" />
-                <rect x="3" y="14" width="7" height="7" />
-                <rect x="14" y="14" width="7" height="7" />
-              </svg> 128 Papers</p>
-          </div>
-        </div>
-        <div class="collection-card">
-          <div class="collection-thumb"
-            style="background-image:url('https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?w=400&h=200&fit=crop')">
-          </div>
-          <div class="collection-info">
-            <h4>Organic Chemistry</h4>
-            <p class="paper-count"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                stroke-width="2">
-                <rect x="3" y="3" width="7" height="7" />
-                <rect x="14" y="3" width="7" height="7" />
-                <rect x="3" y="14" width="7" height="7" />
-                <rect x="14" y="14" width="7" height="7" />
-              </svg> 17 Papers</p>
-          </div>
-        </div>
-      </div>
+  <section class="saved-section" id="saved-answers-section" style="padding-bottom:0;">
+    <div class="section-header">
+      <h2><span data-i18n="library.saved_answers">Jawaban AI Tersimpan</span> <span id="sa-count" style="color:var(--text-muted);font-size:15px;font-weight:400;margin-left:8px;">(0)</span></h2>
     </div>
+    <div id="sa-loading" style="text-align:center;padding:30px 0;">
+      <p style="color:var(--text-muted);" data-i18n="library.loading_answers">Memuat jawaban tersimpan...</p>
+    </div>
+    <div id="sa-empty" style="display:none;text-align:center;padding:30px 0;">
+      <p style="color:var(--text-muted);font-size:14px;" data-i18n="library.no_answers">Belum ada jawaban AI yang disimpan. Simpan jawaban dari halaman Answer.</p>
+    </div>
+    <div id="sa-list"></div>
   </section>
 
-  <section class="saved-section">
+  <section class="saved-section" style="min-height:50vh;">
     <div class="section-header">
-      <h2>Saved Papers</h2><button class="filter-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-          stroke-width="2">
-          <line x1="4" y1="6" x2="20" y2="6" />
-          <line x1="8" y1="12" x2="16" y2="12" />
-          <line x1="11" y1="18" x2="13" y2="18" />
-        </svg> Filter</button>
+      <h2><span data-i18n="library.saved_papers">Saved Papers</span> <span id="saved-count"
+          style="color:var(--text-muted);font-size:15px;font-weight:400;margin-left:8px;">(0)</span></h2>
+      <select id="library-filter" aria-label="Urutkan library" onchange="applyFilter()" style="background:var(--bg-surface-2);border:1px solid var(--border);border-radius:var(--radius-md);color:var(--text-sec);font-size:13px;padding:8px 14px;cursor:pointer;outline:none;">
+          <option value="newest" data-i18n="library.filter_newest">Terbaru Disimpan</option>
+          <option value="year_desc" data-i18n="library.filter_year_desc">Tahun Terbit (Terbaru)</option>
+          <option value="year_asc" data-i18n="library.filter_year_asc">Tahun Terbit (Terlama)</option>
+          <option value="title_asc" data-i18n="library.filter_title">Judul (A-Z)</option>
+      </select>
     </div>
-    <div class="saved-card">
-      <div class="saved-content">
-        <div class="saved-tags"><span class="tag cs">Computer Science</span><span class="tag">Published 2023</span>
-        </div>
-        <h3>Attention Is All You Need: A Retrospective Analysis</h3>
-        <p class="desc">An in-depth review of the transformer architecture's impact on natural language processing over
-          the past five years, detailing foundational shifts in model training and deployment.</p>
-        <p><span class="authors">Authors: A. Vaswani, N. Shazeer</span><span class="citations">🔗 15,204
-            Citations</span></p>
-      </div>
-      <div class="saved-actions">
-        <button><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />
-          </svg></button>
-        <button><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-            <polyline points="7 10 12 15 17 10" />
-            <line x1="12" y1="15" x2="12" y2="3" />
-          </svg></button>
-      </div>
+
+    <div id="loading-state" style="text-align:center; padding:60px 0;">
+      <p style="color:var(--text-muted);" data-i18n="library.loading">Memuat library...</p>
     </div>
-    <div class="saved-card">
-      <div class="saved-content">
-        <div class="saved-tags"><span class="tag physics">Physics</span><span class="tag">Published 2024</span></div>
-        <h3>Entanglement Dynamics in Many-Body Quantum Systems</h3>
-        <p class="desc">Exploring the propagation of quantum entanglement in non-equilibrium states, providing new
-          analytical methods for calculating entropy in one-dimensional spin chains.</p>
-        <p><span class="authors">Authors: J. Smith, L. Chen</span><span class="citations">🔗 142 Citations</span></p>
-      </div>
-      <div class="saved-actions">
-        <button><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />
-          </svg></button>
-        <button><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-            <polyline points="7 10 12 15 17 10" />
-            <line x1="12" y1="15" x2="12" y2="3" />
-          </svg></button>
-      </div>
+
+    <div id="empty-state" style="display:none; text-align:center; padding:80px 0;">
+      <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="1.5"
+        style="margin-bottom:16px;opacity:0.3;">
+        <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />
+      </svg>
+      <p style="color:var(--text-sec);font-size:17px;font-weight:600;margin-bottom:8px;" data-i18n="library.empty">Belum ada paper yang disimpan
+      </p>
+      <p style="color:var(--text-muted);font-size:14px;margin-bottom:24px;" data-i18n="library.empty_desc">Jelajahi ScholarSearch dan simpan paper
+        favorit Anda.</p>
+      <a href="/search" class="btn-new" style="text-decoration:none;" data-i18n="library.search_btn">Cari Paper</a>
+    </div>
+
+    <div id="saved-list">
+      <!-- Papers will be injected here -->
     </div>
   </section>
 
@@ -373,26 +428,222 @@
         <h4>ScholarSearch</h4>
         <p>&copy; 2026 ScholarSearch. Temu Kembali Informasi.</p>
       </div>
-      <div class="footer-links"><a href="#">Privacy</a><a href="#">Terms</a><a href="#">Institutional Access</a><a
-          href="#">API</a><a href="#">Contact</a></div>
+      <div class="footer-links">
+        <a href="https://github.com/Renoslendra/ScholarSearchID.git" target="_blank"
+          style="display:flex;align-items:center;gap:4px;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+            <path
+              d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1.1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.8-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2 1-.3 2-.4 3-.4s2 .1 3 .4c2.3-1.5 3.3-1.2 3.3-1.2.6 1.7.2 2.9.1 3.2.7.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3Z" />
+          </svg>
+          GitHub
+        </a>
+      </div>
     </div>
   </footer>
+  <script src="/static/js/i18n.js"></script>
   <script src="/static/js/app.js"></script>
   <script>
-    // Scroll reveal for library elements
-    const obs = new IntersectionObserver((entries) => {
-      entries.forEach((e) => {
-        if (e.isIntersecting) {
-          e.target.classList.add('visible');
-          obs.unobserve(e.target);
+    let allPapers = [];
+
+    document.addEventListener('DOMContentLoaded', () => {
+      fetchLibrary();
+      fetchSavedAnswers();
+    });
+
+    // ── Saved AI Answers ──
+    function fetchSavedAnswers() {
+      fetch('/api/answer/saved')
+        .then(res => {
+          if (res.status === 401) return { answers: [] };
+          return res.json();
+        })
+        .then(data => {
+          document.getElementById('sa-loading').style.display = 'none';
+          const answers = data.answers || [];
+          document.getElementById('sa-count').textContent = '(' + answers.length + ')';
+          if (answers.length === 0) {
+            document.getElementById('sa-empty').style.display = 'block';
+            return;
+          }
+          renderSavedAnswers(answers);
+        })
+        .catch(() => {
+          document.getElementById('sa-loading').innerHTML = '<p style="color:#ef4444;">Gagal memuat jawaban.</p>';
+        });
+    }
+
+    function renderSavedAnswers(answers) {
+      const list = document.getElementById('sa-list');
+      list.innerHTML = '';
+      answers.forEach((a, i) => {
+        const date = new Date(a.created_at).toLocaleDateString();
+        const truncated = (a.answer || '').substring(0, 150) + ((a.answer || '').length > 150 ? '...' : '');
+        const card = document.createElement('div');
+        card.className = 'saved-answer-card reveal';
+        card.style.transitionDelay = (i * 0.05) + 's';
+        card.innerHTML = `
+          <div class="sa-header">
+            <div style="flex:1;">
+              <div class="sa-question">${a.question}</div>
+              <div class="sa-meta">
+                <span class="sa-badge">${a.source === 'llm' ? 'AI' : 'Extractive'}</span>
+                <span>${date}</span>
+                <span>• ${(a.citations || []).length} referensi</span>
+              </div>
+              <p style="margin-top:8px;font-size:13px;color:var(--text-muted);">${truncated}</p>
+            </div>
+            <button class="sa-delete" title="Hapus" aria-label="Hapus jawaban tersimpan" onclick="event.stopPropagation(); deleteSavedAnswer(${a.id}, this.closest('.saved-answer-card'));">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+            </button>
+          </div>
+          <div class="sa-body">${a.answer.replace(/\n/g, '<br>')}</div>
+        `;
+        card.addEventListener('click', () => {
+          card.querySelector('.sa-body').classList.toggle('open');
+        });
+        list.appendChild(card);
+        requestAnimationFrame(() => card.classList.add('visible'));
+      });
+    }
+
+    function deleteSavedAnswer(id, cardEl) {
+      fetch('/api/answer/unsave', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: id })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.status === 'removed') {
+          cardEl.style.opacity = '0';
+          cardEl.style.transform = 'translateX(20px)';
+          setTimeout(() => {
+            cardEl.remove();
+            const countEl = document.getElementById('sa-count');
+            const curr = parseInt(countEl.textContent.replace(/[^0-9]/g, '')) - 1;
+            countEl.textContent = '(' + Math.max(0, curr) + ')';
+            if (curr <= 0) document.getElementById('sa-empty').style.display = 'block';
+          }, 300);
         }
       });
-    }, { threshold: 0.08 });
-    document.querySelectorAll('.collection-card, .saved-card, .stat-pill').forEach((el, i) => {
-      el.classList.add('reveal');
-      el.style.transitionDelay = (i * 0.07) + 's';
-      obs.observe(el);
-    });
+    }
+
+    function fetchLibrary() {
+      fetch('/api/library')
+        .then(res => {
+          if (res.status === 401) window.location.href = '/signin';
+          return res.json();
+        })
+        .then(data => {
+          document.getElementById('loading-state').style.display = 'none';
+
+          if (!data.papers || data.papers.length === 0) {
+            document.getElementById('empty-state').style.display = 'block';
+            document.getElementById('saved-count').textContent = '(0)';
+            return;
+          }
+
+          allPapers = data.papers; // Save globally
+          document.getElementById('saved-count').textContent = `(${data.total})`;
+          
+          applyFilter(); // Render and apply default filter
+        })
+        .catch(err => {
+          console.error(err);
+          document.getElementById('loading-state').innerHTML = '<p style="color:#ef4444;">Gagal memuat library.</p>';
+        });
+    }
+
+    function applyFilter() {
+        const filterVal = document.getElementById('library-filter').value;
+        let sortedPapers = [...allPapers];
+
+        if (filterVal === 'year_desc') {
+            sortedPapers.sort((a, b) => parseInt(b.year || 0) - parseInt(a.year || 0));
+        } else if (filterVal === 'year_asc') {
+            sortedPapers.sort((a, b) => parseInt(a.year || 0) - parseInt(b.year || 0));
+        } else if (filterVal === 'title_asc') {
+            sortedPapers.sort((a, b) => (a.title || '').localeCompare(b.title || ''));
+        }
+        // 'newest' uses the original order which is reverse chronological by save date from backend
+
+        renderPapers(sortedPapers);
+    }
+
+    function renderPapers(papers) {
+        const list = document.getElementById('saved-list');
+        list.innerHTML = '';
+        
+        if (papers.length === 0) {
+            document.getElementById('empty-state').style.display = 'block';
+            return;
+        } else {
+            document.getElementById('empty-state').style.display = 'none';
+        }
+
+        papers.forEach((p, i) => {
+            const authors = Array.isArray(p.authors) ? p.authors.join(', ') : (p.authors || '');
+            const abstract = (p.abstract || '').substring(0, 200) + ((p.abstract || '').length > 200 ? '...' : '');
+
+            const card = document.createElement('div');
+            card.className = 'saved-card reveal';
+            card.style.transitionDelay = (i * 0.05) + 's';
+            card.innerHTML = `
+              <div class="saved-content">
+                <div class="saved-tags">
+                  <span class="tag" style="background:#e0f2fe; color:#0369a1;">${p.journal || 'Journal'}</span>
+                  <span class="tag">Published ${p.year || ''}</span>
+                </div>
+                <h3 style="margin:12px 0 8px;"><a href="${p.url || '#'}" target="_blank" rel="noopener" style="color:inherit; text-decoration:none;">${p.title}</a></h3>
+                <p class="desc">${abstract}</p>
+                <p style="margin-top:12px;"><span class="authors">Authors: ${authors}</span></p>
+              </div>
+              <div class="saved-actions" style="display:flex; flex-direction:column; gap:12px;">
+                <button title="Remove from Library" aria-label="Remove from Library" onclick="unsavePaper(${p.id}, this.closest('.saved-card'))" style="background:none; border:none; color:var(--text-muted); cursor:pointer;">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2">
+                    <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />
+                  </svg>
+                </button>
+                <a href="${p.url || '#'}" target="_blank" rel="noopener" title="View Source" aria-label="View Source" style="color:var(--text-sec);">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+                    <polyline points="15 3 21 3 21 9" />
+                    <line x1="10" y1="14" x2="21" y2="3" />
+                  </svg>
+                </a>
+              </div>
+            `;
+            list.appendChild(card);
+
+            // Trigger animation
+            requestAnimationFrame(() => card.classList.add('visible'));
+        });
+    }
+
+    function unsavePaper(paperId, cardElement) {
+      fetch('/api/library/unsave', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ paper_id: paperId })
+      })
+        .then(res => res.json())
+        .then(data => {
+          if (data.status === 'unsaved') {
+            cardElement.style.opacity = '0';
+            cardElement.style.transform = 'translateX(20px)';
+            setTimeout(() => {
+              cardElement.remove();
+              // update count
+              const countEl = document.getElementById('saved-count');
+              const curr = parseInt(countEl.textContent.replace(/[^0-9]/g, '')) - 1;
+              countEl.textContent = `(${Math.max(0, curr)})`;
+              if (curr <= 0) {
+                document.getElementById('empty-state').style.display = 'block';
+              }
+            }, 300);
+          }
+        });
+    }
   </script>
 </body>
 

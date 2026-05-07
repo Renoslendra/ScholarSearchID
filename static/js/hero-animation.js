@@ -108,6 +108,14 @@
   document.addEventListener('DOMContentLoaded', () => {
     const targetEl = document.getElementById('decrypted-text');
     if (targetEl) {
+      if (window.matchMedia('(max-width: 768px)').matches) {
+        const theme = PHRASE_THEMES[0];
+        targetEl.textContent = 'SearchScholar';
+        targetEl.style.setProperty('--theme-color', theme.color);
+        targetEl.style.setProperty('--glow-color', theme.glow + '0.45)');
+        return;
+      }
+
       const decryptor = new Decryptor(targetEl);
       let currentIndex = 0;
       async function cycleText() {

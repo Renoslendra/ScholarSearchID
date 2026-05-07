@@ -1,1 +1,1 @@
-"""Answer engine package."""
+"""Answer engine package for ScholarSearchID."""

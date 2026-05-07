@@ -1,12 +1,17 @@
 <!doctype html>
 <html lang="en">
+
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Sign In — ScholarSearch ID</title>
   <link rel="stylesheet" href="/static/css/style.css">
   <style>
-    body.light { display: flex; flex-direction: column; min-height: 100vh; }
+    body.light {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
 
     /* ===== SPLIT LAYOUT ===== */
     .auth-layout {
@@ -33,18 +38,19 @@
       opacity: 0;
       transition: opacity 1.2s ease;
     }
-    .showcase-slide.active { opacity: 1; }
+
+    .showcase-slide.active {
+      opacity: 1;
+    }
 
     /* Dark gradient overlay for text readability */
     .showcase-overlay {
       position: absolute;
       inset: 0;
-      background: linear-gradient(
-        to top,
-        rgba(0,0,0,0.85) 0%,
-        rgba(0,0,0,0.4) 40%,
-        rgba(0,0,0,0.15) 100%
-      );
+      background: linear-gradient(to top,
+          rgba(0, 0, 0, 0.85) 0%,
+          rgba(0, 0, 0, 0.4) 40%,
+          rgba(0, 0, 0, 0.15) 100%);
       z-index: 1;
     }
 
@@ -55,6 +61,7 @@
       color: #fff;
       max-width: 500px;
     }
+
     .showcase-content h2 {
       font-size: 28px;
       font-weight: 800;
@@ -62,9 +69,10 @@
       margin-bottom: 12px;
       letter-spacing: -0.5px;
     }
+
     .showcase-content p {
       font-size: 15px;
-      color: rgba(255,255,255,0.8);
+      color: rgba(255, 255, 255, 0.8);
       line-height: 1.6;
     }
 
@@ -77,15 +85,17 @@
       display: flex;
       gap: 8px;
     }
+
     .showcase-dot {
       width: 8px;
       height: 8px;
       border-radius: 50%;
-      background: rgba(255,255,255,0.35);
+      background: rgba(255, 255, 255, 0.35);
       border: none;
       cursor: pointer;
       transition: all 0.3s ease;
     }
+
     .showcase-dot.active {
       background: #fff;
       width: 24px;
@@ -117,7 +127,10 @@
       letter-spacing: -0.3px;
       text-align: center;
     }
-    .auth-logo span { color: var(--accent); }
+
+    .auth-logo span {
+      color: var(--accent);
+    }
 
     .auth-title {
       font-size: 28px;
@@ -127,6 +140,7 @@
       line-height: 1.3;
       text-align: center;
     }
+
     .auth-subtitle {
       font-size: 14px;
       color: var(--text-sec);
@@ -138,6 +152,7 @@
     .auth-field {
       margin-bottom: 16px;
     }
+
     .auth-field label {
       display: block;
       font-size: 13px;
@@ -145,6 +160,7 @@
       color: var(--text);
       margin-bottom: 6px;
     }
+
     .auth-input {
       width: 100%;
       padding: 12px 16px;
@@ -156,11 +172,15 @@
       outline: none;
       transition: border-color 0.2s ease, box-shadow 0.2s ease;
     }
+
     .auth-input:focus {
       border-color: var(--accent);
       box-shadow: 0 0 0 3px var(--accent-light);
     }
-    .auth-input::placeholder { color: var(--text-muted); }
+
+    .auth-input::placeholder {
+      color: var(--text-muted);
+    }
 
     .btn-auth-primary {
       width: 100%;
@@ -175,6 +195,7 @@
       transition: background 0.2s ease, transform 0.2s ease;
       margin-top: 4px;
     }
+
     .btn-auth-primary:hover {
       background: var(--accent-hover);
       transform: translateY(-1px);
@@ -187,6 +208,7 @@
       gap: 12px;
       margin: 22px 0;
     }
+
     .auth-divider::before,
     .auth-divider::after {
       content: '';
@@ -194,21 +216,25 @@
       height: 1px;
       background: var(--border);
     }
+
     .auth-divider span {
       font-size: 13px;
       color: var(--text-muted);
       white-space: nowrap;
     }
+
     .auth-footer-text {
       text-align: center;
       margin-top: 20px;
       font-size: 14px;
       color: var(--text-sec);
     }
+
     .auth-footer-text a {
       color: var(--accent);
       font-weight: 600;
     }
+
     .auth-footer-text a:hover {
       text-decoration: underline;
     }
@@ -222,7 +248,10 @@
       margin-bottom: 20px;
       margin-top: -8px;
     }
-    .auth-forgot:hover { text-decoration: underline; }
+
+    .auth-forgot:hover {
+      text-decoration: underline;
+    }
 
     /* Stats row */
     .auth-stats {
@@ -232,14 +261,17 @@
       padding-top: 24px;
       border-top: 1px solid var(--border);
     }
+
     .auth-stat {
       text-align: center;
     }
+
     .auth-stat-value {
       font-size: 20px;
       font-weight: 800;
       color: var(--accent);
     }
+
     .auth-stat-label {
       font-size: 11px;
       color: var(--text-muted);
@@ -258,34 +290,47 @@
       font-size: 12px;
       color: var(--text-muted);
     }
+
     .auth-page-footer a {
       color: var(--text-muted);
       margin-left: 16px;
       transition: color 0.2s;
     }
-    .auth-page-footer a:hover { color: var(--text); }
+
+    .auth-page-footer a:hover {
+      color: var(--text);
+    }
 
     /* Responsive */
     @media (max-width: 900px) {
-      .auth-showcase { display: none; }
-      .auth-form-side { width: 100%; padding: 32px 24px; }
+      .auth-showcase {
+        display: none;
+      }
+
+      .auth-form-side {
+        width: 100%;
+        padding: 32px 24px;
+      }
     }
   </style>
+  <link rel="icon" type="image/png" href="/static/img/logoscholarsearch.png">
 </head>
+
 <body class="light">
 
   <div class="auth-layout">
     <!-- Left: Image Showcase with Slideshow -->
     <div class="auth-showcase" id="auth-showcase">
-      <div class="showcase-slide active" style="background-image:url('/static/img/campus1.png')"></div>
-      <div class="showcase-slide" style="background-image:url('/static/img/campus2.png')"></div>
-      <div class="showcase-slide" style="background-image:url('/static/img/campus3.png')"></div>
+      <div class="showcase-slide active" style="background-image:url('/static/img/campus1.jpg')"></div>
+      <div class="showcase-slide" style="background-image:url('/static/img/campus2.jpg')"></div>
+      <div class="showcase-slide" style="background-image:url('/static/img/campus3.jpg')"></div>
 
       <div class="showcase-overlay"></div>
 
       <div class="showcase-content">
         <h2>Temukan Jutaan Paper Akademik Indonesia</h2>
-        <p>ScholarSearch menghubungkan kamu dengan ribuan jurnal dan paper akademik dari universitas terbaik di Indonesia.</p>
+        <p>ScholarSearch menghubungkan kamu dengan ribuan jurnal dan paper akademik dari universitas terbaik di
+          Indonesia.</p>
       </div>
 
       <div class="showcase-dots" id="showcase-dots">
@@ -310,8 +355,11 @@
           <div class="password-wrapper">
             <input type="password" class="auth-input" id="signin-password" placeholder="Masukkan kata sandi">
             <button type="button" class="btn-toggle-password" aria-label="Lihat kata sandi">
-              <svg class="eye-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+              <svg class="eye-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path
+                  d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24">
+                </path>
                 <line x1="1" y1="1" x2="23" y2="23"></line>
               </svg>
             </button>
@@ -322,50 +370,91 @@
 
         <p class="auth-footer-text">Belum punya akun? <a href="/register">Daftar sekarang</a></p>
 
-  <script>
-    // Image slideshow
-    (function(){
-      const slides = document.querySelectorAll('.showcase-slide');
-      const dots = document.querySelectorAll('.showcase-dot');
-      let current = 0;
-      const total = slides.length;
+        <script>
+          // Real Login Request
+          document.getElementById('btn-signin').addEventListener('click', async function (e) {
+            e.preventDefault();
+            const email = document.getElementById('signin-email').value;
+            const pass = document.getElementById('signin-password').value;
 
-      function goTo(idx) {
-        slides[current].classList.remove('active');
-        dots[current].classList.remove('active');
-        current = idx;
-        slides[current].classList.add('active');
-        dots[current].classList.add('active');
-      }
+            if (!email || !pass) {
+              alert('Mohon isi email dan kata sandi Anda.');
+              return;
+            }
 
-      // Auto-advance every 5 seconds
-      setInterval(() => goTo((current + 1) % total), 5000);
+            const originalText = this.textContent;
+            this.textContent = 'Memproses...';
+            this.style.opacity = '0.8';
+            this.disabled = true;
 
-      // Click dots
-      dots.forEach(dot => {
-        dot.addEventListener('click', () => goTo(parseInt(dot.dataset.idx)));
-      });
-    })();
-    // Fitur Show/Hide Password
-    const togglePasswordBtns = document.querySelectorAll('.btn-toggle-password');
-    
-    togglePasswordBtns.forEach(btn => {
-      btn.addEventListener('click', function() {
-        // Cari input yang posisinya persis di sebelah tombol ini
-        const input = this.previousElementSibling;
-        const icon = this.querySelector('.eye-icon');
-        
-        if (input.type === 'password') {
-          input.type = 'text'; 
-          // Ganti icon ke Eye Open
-          icon.innerHTML = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle>';
-        } else {
-          input.type = 'password'; 
-          // Ganti icon ke Eye Off (dicoret)
-          icon.innerHTML = '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line>';
-        }
-      });
-    });
-  </script>
+            try {
+              const response = await fetch('/api/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: email, password: pass })
+              });
+
+              const data = await response.json();
+              if (response.ok) {
+                window.location.href = '/profile';
+              } else {
+                alert(data.error || 'Gagal login.');
+                this.textContent = originalText;
+                this.style.opacity = '1';
+                this.disabled = false;
+              }
+            } catch (err) {
+              alert('Terjadi kesalahan jaringan.');
+              this.textContent = originalText;
+              this.style.opacity = '1';
+              this.disabled = false;
+            }
+          });
+          // Image slideshow
+          (function () {
+            const slides = document.querySelectorAll('.showcase-slide');
+            const dots = document.querySelectorAll('.showcase-dot');
+            let current = 0;
+            const total = slides.length;
+
+            function goTo(idx) {
+              slides[current].classList.remove('active');
+              dots[current].classList.remove('active');
+              current = idx;
+              slides[current].classList.add('active');
+              dots[current].classList.add('active');
+            }
+
+            // Auto-advance every 5 seconds
+            setInterval(() => goTo((current + 1) % total), 5000);
+
+            // Click dots
+            dots.forEach(dot => {
+              dot.addEventListener('click', () => goTo(parseInt(dot.dataset.idx)));
+            });
+          })();
+          // Fitur Show/Hide Password
+          const togglePasswordBtns = document.querySelectorAll('.btn-toggle-password');
+
+          togglePasswordBtns.forEach(btn => {
+            btn.addEventListener('click', function () {
+              // Cari input yang posisinya persis di sebelah tombol ini
+              const input = this.previousElementSibling;
+              const icon = this.querySelector('.eye-icon');
+
+              if (input.type === 'password') {
+                input.type = 'text';
+                // Ganti icon ke Eye Open
+                icon.innerHTML = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle>';
+              } else {
+                input.type = 'password';
+                // Ganti icon ke Eye Off (dicoret)
+                icon.innerHTML = '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line>';
+              }
+            });
+          });
+        </script>
+        <script src="/static/js/i18n.js"></script>
 </body>
+
 </html>

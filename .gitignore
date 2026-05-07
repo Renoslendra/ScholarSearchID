@@ -1,0 +1,42 @@
+# Python
+__pycache__/
+*.py[cod]
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+
+# Virtual environment
+.venv/
+venv/
+env/
+
+# Environment variables
+.env
+
+# Database — JANGAN ignore agar data paper tersedia di Render
+# data/scholarsearch.db
+# data/scholarsearch.db-wal
+# data/scholarsearch.db-shm
+
+# Index cache — JANGAN ignore agar tidak perlu rebuild saat deploy
+# data/index/
+
+# User uploads — biarkan ter-track untuk placeholder
+# static/uploads/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs
+*.log

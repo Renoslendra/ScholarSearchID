@@ -199,7 +199,7 @@
       margin-top: 48px;
     }
     .lab-eval-inner {
-      max-width: 960px;
+      max-width: 1200px;
       margin: 0 auto;
       padding: 0 32px;
     }
@@ -247,13 +247,111 @@
       background: #141414;
       border: 1px solid #1f1f1f;
       border-radius: var(--radius-lg);
-      padding: 24px;
+      min-height: 320px;
+      padding: 24px 28px 26px;
+      overflow: hidden;
     }
+
     .chart-container h4 {
       font-size: 15px;
       font-weight: 600;
       color: #fff;
+      margin-bottom: 18px;
+    }
+
+    .chart-container canvas {
+      display: block;
+      width: 100%;
+      height: 250px;
+    }
+
+    .lab-results-area {
+      margin-top: 32px;
+    }
+
+    .lab-results-title {
+      color: #fff;
+      font-size: 18px;
+      font-weight: 700;
       margin-bottom: 16px;
+    }
+
+    .lab-results-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 16px;
+      align-items: stretch;
+    }
+
+    .lab-result-card {
+      min-width: 0;
+      height: 360px;
+      display: flex;
+      flex-direction: column;
+      background: #1a1a1a;
+      border: 1px solid #333;
+      border-radius: 8px;
+      padding: 16px 12px 16px 16px;
+      overflow: hidden;
+    }
+
+    .lab-result-title {
+      align-self: flex-start;
+      color: #fff;
+      text-transform: uppercase;
+      font-size: 14px;
+      letter-spacing: 0;
+      margin-bottom: 12px;
+      padding-bottom: 6px;
+      border-bottom: 2px solid var(--accent);
+    }
+
+    .lab-result-list {
+      min-height: 0;
+      overflow-y: auto;
+      padding-right: 6px;
+      scrollbar-gutter: stable;
+    }
+
+    .lab-result-item {
+      padding-bottom: 10px;
+      margin-bottom: 10px;
+      border-bottom: 1px solid #333;
+      font-size: 12px;
+    }
+
+    .lab-result-meta {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text-sec);
+      margin-bottom: 4px;
+      font-size: 12px;
+    }
+
+    .lab-result-rank {
+      width: 24px;
+      flex: 0 0 24px;
+      color: var(--text-muted);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .lab-result-score {
+      color: var(--accent);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .lab-result-paper {
+      color: #e5e7eb;
+      line-height: 1.45;
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }
+
+    .lab-result-empty {
+      color: var(--text-muted);
+      font-size: 13px;
+      line-height: 1.5;
     }
 
     /* Scroll reveal */
@@ -263,54 +361,83 @@
     @media (max-width: 768px) {
       .lab-grid { grid-template-columns: 1fr; }
       .metrics-grid { grid-template-columns: 1fr 1fr; }
+      .lab-results-grid {
+        grid-template-columns: 1fr;
+      }
+      .lab-result-card {
+        height: 320px;
+      }
+      .chart-container {
+        min-height: 280px;
+        padding: 18px 16px 20px;
+      }
+      .chart-container canvas {
+        height: 220px;
+      }
     }
   </style>
+<link rel="icon" type="image/png" href="/static/img/logoscholarsearch.png">
 </head>
 <body class="light">
   <nav class="navbar">
-    <a href="/" class="navbar-logo">ScholarSearch</a>
+    <a href="/" class="navbar-logo" style="display:flex;align-items:center;gap:8px;"><img src="/static/img/logoscholarsearch.png" alt="Logo" style="height:24px;width:24px;border-radius:6px;box-shadow:0 0 10px rgba(139,92,246,0.3);"> ScholarSearch</a>
     <ul class="navbar-nav">
-      <li><a href="/search">Search</a></li>
-      <li><a href="/citation">Answer</a></li>
-      <li><a href="/library">Library</a></li>
-      <li><a href="/lab" class="active">Lab</a></li>
+      <li><a href="/search" data-i18n="nav.search">Search</a></li>
+      <li><a href="/citation" data-i18n="nav.answer">Answer</a></li>
+      <li><a href="/library" data-i18n="nav.library">Library</a></li>
+      <li><a href="/lab" class="active" data-i18n="nav.lab">Lab</a></li>
     </ul>
     <div class="navbar-right">
-      <button class="btn-signin" onclick="location.href='/signin'">Sign In</button>
+      {% if user %}
+        <div class="user-profile-nav" style="display:flex;align-items:center;cursor:pointer;" onclick="location.href='/profile'">
+          {% if user.profile_photo %}
+          <div class="user-avatar" style="width:32px;height:32px;border-radius:50%;background-image:url('{{ user.profile_photo }}');background-size:cover;background-position:center;"></div>
+          {% else %}
+          <div class="user-avatar" style="width:32px;height:32px;border-radius:50%;background:var(--accent);color:white;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:14px;">{{ user.firstname[0] }}</div>
+          {% endif %}
+          <span style="color:var(--text);margin-left:8px;font-size:14px;font-weight:500;">{{ user.firstname }}</span>
+        </div>
+      {% else %}
+        <button class="btn-signin" onclick="location.href='/signin'" data-i18n="nav.signin">Sign In</button>
+      {% endif %}
     </div>
   </nav>
 
   <div class="lab-container">
     <div class="lab-header">
-      <h1>IR Lab</h1>
-      <p>Experiment with retrieval models and evaluate performance metrics.</p>
+      <h1 data-i18n="lab.title">IR Lab</h1>
+      <p data-i18n="lab.subtitle">Experiment with retrieval models and evaluate performance metrics.</p>
     </div>
     <div class="lab-grid">
       <div class="lab-panel">
-        <h3>Retrieval Configuration</h3>
+        <h3 data-i18n="lab.config">Retrieval Configuration</h3>
+        <div class="lab-field">
+          <label for="lab-query" data-i18n="lab.query_label">Search Query</label>
+          <input type="text" class="lab-input" id="lab-query" placeholder="Ketik query pencarian..." value="sistem informasi">
+        </div>
         <div class="lab-field">
           <label for="topk">Top-K Results</label>
-          <input type="number" class="lab-input" id="topk" value="10" min="1" max="100">
+          <input type="number" class="lab-input" id="topk" value="10" min="1" max="50">
         </div>
         <div class="lab-field">
-          <label>Similarity Threshold</label>
-          <input type="range" id="threshold" min="0" max="100" value="75" style="width:100%;">
-          <div class="slider-labels"><span>0.0</span><span>0.75</span><span>1.0</span></div>
+          <label>BM25 k1</label>
+          <input type="text" class="lab-input" id="bm25-k1" value="1.5">
         </div>
         <div class="lab-field">
-          <label for="rerank">Re-ranking Weight</label>
-          <input type="text" class="lab-input" id="rerank" value="0.45">
+          <label>BM25 b</label>
+          <input type="text" class="lab-input" id="bm25-b" value="0.75">
         </div>
       </div>
       <div class="lab-panel">
-        <h3>Model Selection</h3>
+        <h3 data-i18n="lab.model_select">Model Selection</h3>
         <div class="checkbox-group">
-          <label class="checkbox-item"><input type="checkbox" name="model" value="bm25" checked><span class="checkmark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span><span class="checkbox-label">BM25 Baseline</span></label>
-          <label class="checkbox-item"><input type="checkbox" name="model" value="dense" checked><span class="checkmark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span><span class="checkbox-label">Dense Retriever (BERT)</span></label>
-          <label class="checkbox-item"><input type="checkbox" name="model" value="colbert"><span class="checkmark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span><span class="checkbox-label">ColBERTv2 Late Interaction</span></label>
-          <label class="checkbox-item"><input type="checkbox" name="model" value="hybrid"><span class="checkmark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span><span class="checkbox-label">Hybrid Search (BM25 + Dense)</span></label>
+          <label class="checkbox-item"><input type="checkbox" name="model" value="bm25" checked><span class="checkmark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span><span class="checkbox-label">BM25</span></label>
+          <label class="checkbox-item"><input type="checkbox" name="model" value="tfidf" checked><span class="checkmark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span><span class="checkbox-label">TF-IDF</span></label>
+          <label class="checkbox-item"><input type="checkbox" name="model" value="lm"><span class="checkmark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span><span class="checkbox-label">Language Model</span></label>
+          <label class="checkbox-item"><input type="checkbox" name="model" value="semantic"><span class="checkmark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span><span class="checkbox-label">Semantic Search</span></label>
+          <label class="checkbox-item"><input type="checkbox" name="model" value="l2r"><span class="checkmark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span><span class="checkbox-label">Learning to Rank</span></label>
         </div>
-        <button class="btn-run" id="btn-run">Run Evaluation</button>
+        <button class="btn-run" id="btn-run" data-i18n="lab.run">Run Evaluation</button>
       </div>
     </div>
   </div>
@@ -318,23 +445,38 @@
   <!-- Dark evaluation section -->
   <div class="lab-eval-wrap">
     <div class="lab-eval-inner">
-      <h2>Evaluation Results</h2>
+      <h2 data-i18n="lab.eval_results">Evaluation Results</h2>
+      <div id="lab-status" style="color:var(--text-muted);font-size:14px;margin-bottom:16px;" data-i18n="lab.eval_hint">Klik "Run Evaluation" untuk mulai perbandingan model.</div>
       <div class="metrics-grid" id="metrics-grid">
-        <div class="metric-card"><div class="metric-label">MAP@10</div><div class="metric-value" id="metric-map">0.684</div></div>
-        <div class="metric-card"><div class="metric-label">NDCG@10</div><div class="metric-value" id="metric-ndcg">0.712</div></div>
-        <div class="metric-card"><div class="metric-label">MRR</div><div class="metric-value" id="metric-mrr">0.805</div></div>
-        <div class="metric-card"><div class="metric-label">RECALL@100</div><div class="metric-value" id="metric-recall">0.941</div></div>
+        <div class="metric-card"><div class="metric-label">MAP@10</div><div class="metric-value" id="metric-map">—</div></div>
+        <div class="metric-card"><div class="metric-label">NDCG@10</div><div class="metric-value" id="metric-ndcg">—</div></div>
+        <div class="metric-card"><div class="metric-label">MRR</div><div class="metric-value" id="metric-mrr">—</div></div>
+        <div class="metric-card"><div class="metric-label">P@10</div><div class="metric-value" id="metric-precision">—</div></div>
       </div>
-      <div class="chart-container"><h4>Precision-Recall Curve</h4><canvas id="pr-chart" width="800" height="260"></canvas></div>
+      <div class="chart-container"><h4 data-i18n="lab.pr_curve">Precision-Recall Curve</h4><canvas id="pr-chart"></canvas></div>
+
+      <!-- Results comparison area -->
+      <div class="lab-results-area" id="lab-results-area" style="display:none;">
+        <h3 class="lab-results-title" data-i18n="lab.results_per_model">Results per Model</h3>
+        <div class="lab-results-grid" id="lab-results-grid"></div>
+      </div>
     </div>
   </div>
 
   <footer class="footer">
     <div class="footer-inner">
       <div class="footer-brand"><h4>ScholarSearch</h4><p>&copy; 2026 ScholarSearch. Temu Kembali Informasi.</p></div>
-      <div class="footer-links"><a href="#">Privacy</a><a href="#">Terms</a><a href="#">Institutional Access</a><a href="#">API</a><a href="#">Contact</a></div>
+      <div class="footer-links">
+        <a href="https://github.com/Renoslendra/ScholarSearchID.git" target="_blank" style="display:flex;align-items:center;gap:4px;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1.1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.8-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2 1-.3 2-.4 3-.4s2 .1 3 .4c2.3-1.5 3.3-1.2 3.3-1.2.6 1.7.2 2.9.1 3.2.7.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3Z"/>
+          </svg>
+          GitHub
+        </a>
+      </div>
     </div>
   </footer>
+  <script src="/static/js/i18n.js"></script>
   <script src="/static/js/app.js"></script>
   <script src="/static/js/lab.js"></script>
   <script>

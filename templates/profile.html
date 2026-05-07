@@ -6,22 +6,27 @@
     <title>Profile — ScholarSearch</title>
     <link rel="stylesheet" href="/static/css/style.css">
     <link rel="stylesheet" href="/static/css/profile.css">
-  </head>
+  <link rel="icon" type="image/png" href="/static/img/logoscholarsearch.png">
+</head>
   <body class="light">
     <nav class="navbar">
-      <a href="/" class="navbar-logo">ScholarSearch</a>
+      <a href="/" class="navbar-logo" style="display:flex;align-items:center;gap:8px;"><img src="/static/img/logoscholarsearch.png" alt="Logo" style="height:24px;width:24px;border-radius:6px;box-shadow:0 0 10px rgba(139,92,246,0.3);"> ScholarSearch</a>
       <ul class="navbar-nav">
-        <li><a href="/search">Search</a></li>
-        <li><a href="/citation">Answer</a></li>
-        <li><a href="/library">Library</a></li>
-        <li><a href="/lab">Lab</a></li>
+        <li><a href="/search" data-i18n="nav.search">Search</a></li>
+        <li><a href="/citation" data-i18n="nav.answer">Answer</a></li>
+        <li><a href="/library" data-i18n="nav.library">Library</a></li>
+        <li><a href="/lab" data-i18n="nav.lab">Lab</a></li>
       </ul>
       <div class="navbar-right">
         <!-- Logged-in user avatar + dropdown -->
         <div class="user-menu" id="user-menu">
-          <button class="user-menu-trigger" id="user-menu-trigger">
-            <div class="user-avatar">N</div>
-            <span class="user-name">NAMA USER</span>
+          <button class="user-menu-trigger" id="user-menu-trigger" aria-haspopup="true" aria-expanded="false" aria-controls="user-dropdown">
+            {% if user.profile_photo %}
+            <div class="user-avatar" style="background-image:url('{{ user.profile_photo }}');background-size:cover;background-position:center;color:transparent;">{{ user.firstname[0].upper() }}</div>
+            {% else %}
+            <div class="user-avatar">{{ user.firstname[0].upper() }}</div>
+            {% endif %}
+            <span class="user-name">{{ user.firstname }} {{ user.lastname }}</span>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
               stroke="currentColor" stroke-width="2"><polyline
                 points="6 9 12 15 18 9" /></svg>
@@ -48,7 +53,7 @@
               Library
             </a>
             <div class="dropdown-divider"></div>
-            <a href="/signin" class="dropdown-item dropdown-item--danger">
+            <a href="/api/logout" class="dropdown-item dropdown-item--danger">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
                 stroke="currentColor" stroke-width="2"><path
                   d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" /><polyline
@@ -68,11 +73,14 @@
 
         <div class="profile-header">
           <div class="profile-header-left">
-            <div class="profile-avatar-lg">N</div>
+            {% if user.profile_photo %}
+            <div class="profile-avatar-lg" style="background-image:url('{{ user.profile_photo }}');background-size:cover;background-position:center;color:transparent;">{{ user.firstname[0].upper() }}</div>
+            {% else %}
+            <div class="profile-avatar-lg">{{ user.firstname[0].upper() }}</div>
+            {% endif %}
             <div class="profile-info">
-              <h2 class="profile-name" id="profile-name">ZVRNC</h2>
-              <p class="profile-email"
-                id="profile-email">akunuser@example.com</p>
+              <h2 class="profile-name" id="profile-name">{{ user.firstname }} {{ user.lastname }}</h2>
+              <p class="profile-email" id="profile-email">{{ user.email }}</p>
             </div>
           </div>
 
@@ -90,39 +98,41 @@
           <div class="profile-grid">
             <div class="profile-field">
               <label>First Name</label>
-              <div class="profile-value" id="pf-firstname">ZVRNC</div>
+              <div class="profile-value" id="pf-firstname">{{ user.firstname }}</div>
             </div>
             <div class="profile-field">
               <label>Last Name</label>
-              <div class="profile-value" id="pf-lastname">GG</div>
+              <div class="profile-value" id="pf-lastname">{{ user.lastname }}</div>
             </div>
             <div class="profile-field">
-              <label>Username</label>
-              <div class="profile-value" id="pf-username">Zvrnce</div>
+              <label>Email</label>
+              <div class="profile-value" id="pf-email">{{ user.email }}</div>
             </div>
             <div class="profile-field">
               <label>Gender</label>
-              <div class="profile-value" id="pf-gender">Laki-Laki</div>
+              <div class="profile-value" id="pf-gender">{{ user.gender or 'Belum diisi' }}</div>
             </div>
             <div class="profile-field">
               <label>Country</label>
-              <div class="profile-value" id="pf-country">Indonesia</div>
+              <div class="profile-value" id="pf-country">{{ user.country or 'Belum diisi' }}</div>
             </div>
             <div class="profile-field">
               <label>Role</label>
-              <div class="profile-value" id="pf-role">Student</div>
+              <div class="profile-value" id="pf-role">{{ user.role or 'Belum diisi' }}</div>
             </div>
           </div>
           <div class="profile-field profile-field--full">
             <label>About Me</label>
-            <div class="profile-value profile-value--bio" id="pf-about">Lorem
-              Ipsum description user</div>
+            <div class="profile-value profile-value--bio" id="pf-about">{{ user.about or 'Belum ada deskripsi profil.' }}</div>
           </div>
         </div>
 
       </div>
     </main>
-    <script src="/static/js/app.js"></script>
-    <script src="/static/js/profile.js"></script>
+    <script src="/static/js/i18n.js"></script>
+  <script src="/static/js/app.js"></script>
+    <script src="/static/js/profile.js?v=2"></script>
   </body>
 </html>
+
+

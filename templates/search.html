@@ -68,101 +68,338 @@
     .results-count { color: var(--text-muted); }
     .footer { background: var(--bg-surface); border-top-color: var(--border); }
   </style>
+<link rel="icon" type="image/png" href="/static/img/logoscholarsearch.png">
 </head>
 <body>
   <nav class="navbar">
-    <a href="/" class="navbar-logo">ScholarSearch</a>
+    <a href="/" class="navbar-logo" style="display:flex;align-items:center;gap:8px;"><img src="/static/img/logoscholarsearch.png" alt="Logo" style="height:24px;width:24px;border-radius:6px;box-shadow:0 0 10px rgba(139,92,246,0.3);"> ScholarSearch</a>
     <ul class="navbar-nav">
-      <li><a href="/search" class="active">Search</a></li>
-      <li><a href="/citation">Answer</a></li>
-      <li><a href="/library">Library</a></li>
-      <li><a href="/lab">Lab</a></li>
+      <li><a href="/search" class="active" data-i18n="nav.search">Search</a></li>
+      <li><a href="/citation" data-i18n="nav.answer">Answer</a></li>
+      <li><a href="/library" data-i18n="nav.library">Library</a></li>
+      <li><a href="/lab" data-i18n="nav.lab">Lab</a></li>
     </ul>
     <div class="navbar-right">
       <div class="navbar-search">
-        <input type="text" id="nav-search" placeholder="Search...">
+        <input type="text" id="nav-search" placeholder="Search..." data-i18n-ph="nav.search_placeholder">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
       </div>
-      <button class="btn-signin" onclick="location.href='/signin'">Sign In</button>
+      {% if user %}
+        <div class="user-profile-nav" style="display:flex;align-items:center;cursor:pointer;" onclick="location.href='/profile'">
+          {% if user.profile_photo %}
+          <div class="user-avatar" style="width:32px;height:32px;border-radius:50%;background-image:url('{{ user.profile_photo }}');background-size:cover;background-position:center;"></div>
+          {% else %}
+          <div class="user-avatar" style="width:32px;height:32px;border-radius:50%;background:var(--accent);color:white;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:14px;">{{ user.firstname[0] }}</div>
+          {% endif %}
+          <span style="color:var(--text);margin-left:8px;font-size:14px;font-weight:500;">{{ user.firstname }}</span>
+        </div>
+      {% else %}
+        <button class="btn-signin" onclick="location.href='/signin'" data-i18n="nav.signin">Sign In</button>
+      {% endif %}
     </div>
   </nav>
 
   <main class="results-container" style="padding-top:32px;">
-    <p class="results-count">Showing results for</p>
-    <h1 class="query-text" id="query-text">"quantum entanglement in photosynthetic complexes"</h1>
-    <div style="display:flex;align-items:center;gap:12px;margin-top:8px;">
-      <span class="results-count">About 4,200 results (0.12 seconds)</span>
-      <button class="filter-btn">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="11" y1="18" x2="13" y2="18"/></svg>
-        Filters
-      </button>
+    <!-- Empty state when no query -->
+    <div id="search-empty" style="display:none;text-align:center;padding:80px 24px;">
+      <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="1.5" style="margin-bottom:16px;opacity:0.5;"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <p style="color:var(--text-sec);font-size:17px;font-weight:600;margin-bottom:8px;" data-i18n="search.empty_title">Cari paper akademik</p>
+      <p style="color:var(--text-muted);font-size:14px;margin-bottom:24px;" data-i18n="search.empty_desc">Ketik kata kunci di search bar di atas, lalu tekan Enter</p>
+      <a href="/" style="color:var(--text-link);font-size:14px;font-weight:500;text-decoration:none;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:4px;"><polyline points="15 18 9 12 15 6"/></svg><span data-i18n="search.back_home">Kembali ke Homepage</span>
+      </a>
     </div>
 
-    <div id="results-list" style="margin-top:24px;">
-      <article class="result-card">
-        <h3><a href="#">Evidence for wavelike energy transfer through quantum coherence in photosynthetic systems</a></h3>
-        <div class="result-meta"><span>G.S. Engel, T.R. Calhoun, E.L. Read, et al.</span><span class="dot">·</span><span>Nature</span><span class="dot">·</span><span>2007</span></div>
-        <p class="result-abstract">Photosynthetic complexes are exquisitely tuned to capture solar light efficiently, then transmit the excitation energy to reaction centres, where long term energy storage is initiated. The energy transfer mechanism is often described by semiclassical models that invoke 'hopping' of excited-state populations along discrete energy levels. Two-dimensional electronic spectroscopy of the Fenna-Matthews-Olson (FMO) bacteriochlorophyll complex reveals direct evidence for remarkably long-lived wavelike electronic quantum coherence playing an important part in energy transfer processes...</p>
-        <div class="result-footer">
-          <div class="result-badges"><span class="badge">BM25: 98.4</span><span class="badge">Citations: 4,512</span></div>
-          <a href="#" class="view-paper">View paper <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></a>
-        </div>
-      </article>
+    <!-- Results view (hidden when no query) -->
+    <div id="search-results-view">
+      <p class="results-count" data-i18n="search.showing">Showing results for</p>
+      <h1 class="query-text" id="query-text">"..."</h1>
+      <div class="results-toolbar" style="display:flex;align-items:center;gap:12px;margin-top:8px;">
+        <span class="results-count" id="results-meta"></span>
+        <select id="model-select" aria-label="Pilih model ranking" style="background:var(--bg-surface-2);border:1px solid var(--border);border-radius:var(--radius-md);color:var(--text-sec);font-size:13px;padding:6px 12px;cursor:pointer;outline:none;">
+          <option value="bm25">BM25</option>
+          <option value="tfidf">TF-IDF</option>
+          <option value="lm">Language Model</option>
+          <option value="l2r">Learning to Rank</option>
+          <option value="semantic">Semantic</option>
+        </select>
+      </div> <br>
+      <p id="spelling-hint" style="margin-top:8px;font-size:13px;color:var(--text-muted);display:none;">
+        Did you mean: <a id="spelling-link" href="#" style="color:var(--text-link);font-weight:600;"></a>
+      </p>
 
-      <article class="result-card">
-        <h3><a href="#">Quantum biology: Introduction</a></h3>
-        <div class="result-meta"><span>P. Ball</span><span class="dot">·</span><span>Nature Physics</span><span class="dot">·</span><span>2011</span></div>
-        <p class="result-abstract">The idea that quantum mechanics might play a fundamental role in biology is not new. But recent experiments on light-harvesting complexes have provided the first direct evidence for quantum coherence in biological systems at physiological temperatures. This raises the intriguing possibility that natural selection has found ways to exploit non-trivial quantum effects to optimize biological functions, such as energy transfer in photosynthesis and magnetoreception in birds...</p>
-        <div class="result-footer">
-          <div class="result-badges"><span class="badge">BM25: 87.2</span><span class="badge">Citations: 1,204</span></div>
-          <a href="#" class="view-paper">View paper <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></a>
-        </div>
-      </article>
+      <div id="results-list" style="margin-top:24px;"></div>
 
-      <article class="result-card">
-        <h3><a href="#">Coherent Intradimer Dynamics and Contradictory Interpretations of Two-Dimensional Electronic Spectra of Photosynthetic Light-Harvesting Complexes</a></h3>
-        <div class="result-meta"><span>D. Hayes, G.B. Griffin, G.S. Engel</span><span class="dot">·</span><span>Science</span><span class="dot">·</span><span>2013</span></div>
-        <p class="result-abstract">The observation of long-lived coherent oscillations in two-dimensional electronic spectra of photosynthetic complexes has sparked intense debate regarding their physical origin and functional significance. We present a detailed theoretical analysis of intradimer dynamics, demonstrating that vibronic coupling plays a crucial role in sustaining these coherences. Our results suggest that the standard purely electronic interpretation must be revised to account for the complex interplay between electronic and vibrational degrees of freedom...</p>
-        <div class="result-footer">
-          <div class="result-badges"><span class="badge">BM25: 84.5</span><span class="badge">Citations: 856</span></div>
-          <a href="#" class="view-paper">View paper <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></a>
-        </div>
-      </article>
-    </div>
-
-    <div class="pagination">
-      <button class="page-btn disabled"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg></button>
-      <button class="page-btn active">1</button>
-      <button class="page-btn">2</button>
-      <button class="page-btn">3</button>
-      <span class="page-ellipsis">...</span>
-      <button class="page-btn">10</button>
-      <button class="page-btn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></button>
+      <div class="pagination" id="pagination" style="display:none;"></div>
     </div>
   </main>
 
   <footer class="footer">
     <div class="footer-inner">
-      <div class="footer-brand"><h4>ScholarSearch</h4><p>&copy; 2026 ScholarSearch. Temu Kembali Informasi.</p></div>
-      <div class="footer-links"><a href="#">Privacy</a><a href="#">Terms</a><a href="#">Institutional Access</a><a href="#">API</a><a href="#">Contact</a></div>
+      <div class="footer-brand"><h4>ScholarSearch</h4><p data-i18n="footer.copyright">&copy; 2026 ScholarSearch. Temu Kembali Informasi.</p></div>
+      <div class="footer-links">
+        <a href="https://github.com/Renoslendra/ScholarSearchID.git" target="_blank" style="display:flex;align-items:center;gap:4px;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1.1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.8-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2 1-.3 2-.4 3-.4s2 .1 3 .4c2.3-1.5 3.3-1.2 3.3-1.2.6 1.7.2 2.9.1 3.2.7.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3Z"/>
+          </svg>
+          GitHub
+        </a>
+      </div>
     </div>
   </footer>
+  <script src="/static/js/i18n.js"></script>
   <script src="/static/js/app.js"></script>
   <script src="/static/js/search.js"></script>
   <script>
-    // Scroll reveal for result cards
-    const obs = new IntersectionObserver((entries) => {
-      entries.forEach((e, i) => {
-        if (e.isIntersecting) {
-          setTimeout(() => e.target.classList.add('visible'), i * 80);
-          obs.unobserve(e.target);
+    // ── Dynamic Search Results ──
+    (function(){
+      const params = new URLSearchParams(window.location.search);
+      const q = params.get('q') || '';
+      let currentPage = parseInt(params.get('page')) || 1;
+
+      // Toggle empty state vs results view
+      const emptyState = document.getElementById('search-empty');
+      const resultsView = document.getElementById('search-results-view');
+
+      if (!q) {
+        emptyState.style.display = 'block';
+        resultsView.style.display = 'none';
+        return;
+      } else {
+        emptyState.style.display = 'none';
+        resultsView.style.display = 'block';
+      }
+
+      function doSearch(page, model) {
+        if (!q) return;
+        const m = model || document.getElementById('model-select').value;
+        const url = '/api/search?q=' + encodeURIComponent(q) + '&page=' + page + '&model=' + m + '&per_page=10';
+
+        document.getElementById('results-list').innerHTML = '<p style="color:var(--text-muted);padding:24px 0;">Searching…</p>';
+
+        fetch(url).then(r => r.json()).then(data => {
+          // Query text
+          const qt = document.getElementById('query-text');
+          if (qt) qt.textContent = '"' + data.query + '"';
+          document.title = data.query + ' — ScholarSearch ID';
+
+          // Meta
+          const meta = document.getElementById('results-meta');
+          if (meta) meta.textContent = data.total + ' ' + t('search.results_suffix') + ' (' + data.time_ms + ' ms) — ' + (data.model_used||'').toUpperCase();
+
+          // Spelling
+          const hint = document.getElementById('spelling-hint');
+          const link = document.getElementById('spelling-link');
+          if (data.suggestion && hint && link) {
+            hint.style.display = 'block';
+            link.textContent = data.suggestion;
+            link.href = '/search?q=' + encodeURIComponent(data.suggestion);
+          }
+
+          // Query expansion info
+          if (data.expanded_query) {
+            let expBox = document.getElementById('expansion-hint');
+            if (!expBox) {
+              expBox = document.createElement('div');
+              expBox.id = 'expansion-hint';
+              expBox.style.cssText = 'padding:8px 14px;background:rgba(37,99,235,0.08);border:1px solid rgba(37,99,235,0.2);border-radius:8px;font-size:13px;color:var(--text-sec);margin-bottom:16px;';
+              const hint = document.getElementById('spelling-hint');
+              if (hint) hint.parentNode.insertBefore(expBox, hint.nextSibling);
+              else document.getElementById('results-list').parentNode.insertBefore(expBox, document.getElementById('results-list'));
+            }
+            expBox.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:inline;vertical-align:-2px;margin-right:6px;"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>' + t('search.query_expanded') + ' <strong>' + data.expanded_query + '</strong>';
+            expBox.style.display = 'block';
+          }
+
+          // Results
+          const list = document.getElementById('results-list');
+          if (!data.results || data.results.length === 0) {
+            list.innerHTML = '<p style="color:var(--text-sec);padding:32px 0;text-align:center;font-size:15px;">' + t('search.no_results') + '</p>';
+            return;
+          }
+          list.innerHTML = '';
+          
+          // Get saved paper IDs for current user to show correct icon state
+          fetch('/api/library/ids').then(r => r.json()).then(savedData => {
+            const savedIds = new Set(savedData.ids || []);
+            
+            data.results.forEach((r, i) => {
+              const authors = Array.isArray(r.authors) ? r.authors.join(', ') : (r.authors||'');
+              const abstract = (r.abstract||'').substring(0, 300) + ((r.abstract||'').length > 300 ? '…' : '');
+              const isSaved = savedIds.has(r.id);
+              const saveIcon = isSaved ? 'M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z' : 'M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z';
+              const saveFill = isSaved ? 'currentColor' : 'none';
+              const saveColor = isSaved ? '#2563eb' : 'currentColor';
+              
+              const card = document.createElement('article');
+              card.className = 'result-card reveal';
+              card.style.transitionDelay = (i * 0.06) + 's';
+              card.innerHTML =
+                '<h3><a href="' + (r.url||'#') + '" target="_blank">' + r.title + '</a></h3>' +
+                '<div class="result-meta"><span>' + authors + '</span><span class="dot">·</span><span>' + (r.journal||'') + '</span><span class="dot">·</span><span>' + (r.year||'') + '</span></div>' +
+                '<p class="result-abstract">' + abstract + '</p>' +
+                '<div class="result-footer"><div class="result-badges"><span class="badge">' + (r.model||'').toUpperCase() + ': ' + r.score + '</span></div>' +
+                '<div class="result-actions" style="display:flex;gap:12px;align-items:center;">' +
+                '<button class="save-btn" aria-label="' + (isSaved ? t('search.saved') : t('search.save')) + '" data-id="' + r.id + '" data-saved="' + isSaved + '" style="background:none;border:none;cursor:pointer;color:'+saveColor+';display:flex;align-items:center;gap:4px;font-size:13px;font-weight:500;">' +
+                '<svg width="16" height="16" viewBox="0 0 24 24" fill="'+saveFill+'" stroke="currentColor" stroke-width="2"><path d="'+saveIcon+'"/></svg>' +
+                (isSaved ? t('search.saved') : t('search.save')) + '</button>' +
+                '<a href="' + (r.url||'#') + '" target="_blank" class="view-paper" rel="noopener">' + t('search.view_paper') + ' <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></a>' +
+                '</div></div>';
+              list.appendChild(card);
+              requestAnimationFrame(() => card.classList.add('visible'));
+            });
+            
+            // Attach save event listeners
+            document.querySelectorAll('.save-btn').forEach(btn => {
+               btn.addEventListener('click', function() {
+                  const pid = parseInt(this.getAttribute('data-id'));
+                  const saved = this.getAttribute('data-saved') === 'true';
+                  const endpoint = saved ? '/api/library/unsave' : '/api/library/save';
+                  
+                  fetch(endpoint, {
+                     method: 'POST',
+                     headers: {'Content-Type': 'application/json'},
+                     body: JSON.stringify({paper_id: pid})
+                  }).then(res => {
+                     if (res.status === 401) { window.location.href = '/signin'; return; }
+                     return res.json();
+                  }).then(resData => {
+                     if (resData && (resData.status === 'saved' || resData.status === 'unsaved')) {
+                        const newSaved = !saved;
+                        this.setAttribute('data-saved', newSaved);
+                        this.setAttribute('aria-label', newSaved ? 'Saved' : 'Save');
+                        this.style.color = newSaved ? '#2563eb' : 'var(--text-sec)';
+                        this.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="'+(newSaved?'currentColor':'none')+'" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>' + (newSaved?'Saved':'Save');
+                     }
+                  });
+               });
+            });
+            
+
+          }).catch(() => {
+             // Fallback if not logged in
+             data.results.forEach((r, i) => {
+               const authors = Array.isArray(r.authors) ? r.authors.join(', ') : (r.authors||'');
+               const abstract = (r.abstract||'').substring(0, 300) + ((r.abstract||'').length > 300 ? '…' : '');
+               const card = document.createElement('article');
+               card.className = 'result-card reveal';
+               card.style.transitionDelay = (i * 0.06) + 's';
+               card.innerHTML =
+                 '<h3><a href="' + (r.url||'#') + '" target="_blank">' + r.title + '</a></h3>' +
+                 '<div class="result-meta"><span>' + authors + '</span><span class="dot">·</span><span>' + (r.journal||'') + '</span><span class="dot">·</span><span>' + (r.year||'') + '</span></div>' +
+                 '<p class="result-abstract">' + abstract + '</p>' +
+                 '<div class="result-footer"><div class="result-badges"><span class="badge">' + (r.model||'').toUpperCase() + ': ' + r.score + '</span></div>' +
+                 '<div class="result-actions" style="display:flex;gap:12px;align-items:center;">' +
+                 '<button class="save-btn" aria-label="Save" onclick="window.location.href=\'/signin\'" style="background:none;border:none;cursor:pointer;color:var(--text-sec);display:flex;align-items:center;gap:4px;font-size:13px;font-weight:500;">' +
+                 '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>Save</button>' +
+                 '<a href="' + (r.url||'#') + '" target="_blank" class="view-paper" rel="noopener">View paper <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></a>' +
+                 '</div></div>';
+               list.appendChild(card);
+               requestAnimationFrame(() => card.classList.add('visible'));
+             });
+          });
+
+          // Pagination
+          const totalPages = Math.ceil(data.total / (data.per_page||10));
+          renderPagination(currentPage, totalPages, m);
+        }).catch(err => {
+          document.getElementById('results-list').innerHTML = '<p style="color:#ef4444;padding:24px 0;">Error: ' + err.message + '</p>';
+        });
+      }
+
+      function renderPagination(page, total, model) {
+        const pg = document.getElementById('pagination');
+        if (total <= 1) { pg.style.display = 'none'; return; }
+        pg.style.display = 'flex';
+        pg.innerHTML = '';
+        const isCompact = window.matchMedia('(max-width: 480px)').matches;
+        // Prev
+        const prev = document.createElement('button');
+        prev.className = 'page-btn' + (page <= 1 ? ' disabled' : '');
+        prev.setAttribute('aria-label', 'Previous page');
+        prev.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>';
+        prev.onclick = () => { currentPage = page - 1; doSearch(currentPage, model); window.scrollTo(0,0); };
+        pg.appendChild(prev);
+
+        if (isCompact) {
+          const status = document.createElement('span');
+          status.className = 'page-status';
+          status.textContent = 'Page ' + page + ' / ' + total;
+          pg.appendChild(status);
+
+          const nextCompact = document.createElement('button');
+          nextCompact.className = 'page-btn' + (page >= total ? ' disabled' : '');
+          nextCompact.setAttribute('aria-label', 'Next page');
+          nextCompact.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>';
+          nextCompact.onclick = () => { currentPage = page + 1; doSearch(currentPage, model); window.scrollTo(0,0); };
+          pg.appendChild(nextCompact);
+          return;
         }
+        // Page buttons — sliding window centered on current page
+        const maxVisible = 5;
+        let startPage = Math.max(1, page - Math.floor(maxVisible / 2));
+        let endPage = Math.min(total, startPage + maxVisible - 1);
+        if (endPage - startPage < maxVisible - 1) {
+          startPage = Math.max(1, endPage - maxVisible + 1);
+        }
+
+        // Show page 1 + ellipsis if window doesn't start at 1
+        if (startPage > 1) {
+          const first = document.createElement('button');
+          first.className = 'page-btn';
+          first.textContent = 1;
+          first.onclick = () => { currentPage = 1; doSearch(1, model); window.scrollTo(0,0); };
+          pg.appendChild(first);
+          if (startPage > 2) {
+            const ell = document.createElement('span');
+            ell.className = 'page-ellipsis';
+            ell.textContent = '…';
+            pg.appendChild(ell);
+          }
+        }
+
+        for (let i = startPage; i <= endPage; i++) {
+          const btn = document.createElement('button');
+          btn.className = 'page-btn' + (i === page ? ' active' : '');
+          btn.textContent = i;
+          btn.onclick = ((p) => () => { currentPage = p; doSearch(p, model); window.scrollTo(0,0); })(i);
+          pg.appendChild(btn);
+        }
+
+        // Show ellipsis + last page if window doesn't end at total
+        if (endPage < total) {
+          if (endPage < total - 1) {
+            const ell = document.createElement('span');
+            ell.className = 'page-ellipsis';
+            ell.textContent = '…';
+            pg.appendChild(ell);
+          }
+          const last = document.createElement('button');
+          last.className = 'page-btn';
+          last.textContent = total;
+          last.onclick = () => { currentPage = total; doSearch(total, model); window.scrollTo(0,0); };
+          pg.appendChild(last);
+        }
+        // Next
+        const next = document.createElement('button');
+        next.className = 'page-btn' + (page >= total ? ' disabled' : '');
+        next.setAttribute('aria-label', 'Next page');
+        next.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>';
+        next.onclick = () => { currentPage = page + 1; doSearch(currentPage, model); window.scrollTo(0,0); };
+        pg.appendChild(next);
+      }
+
+      // Model select change
+      document.getElementById('model-select').addEventListener('change', () => {
+        currentPage = 1;
+        doSearch(1);
       });
-    }, { threshold: 0.1 });
-    document.querySelectorAll('.result-card, .pagination').forEach(el => {
-      el.classList.add('reveal');
-      obs.observe(el);
-    });
+
+      // Initial search
+      doSearch(currentPage);
+    })();
   </script>
 </body>
 </html>
+
+

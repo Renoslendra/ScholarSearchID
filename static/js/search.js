@@ -19,13 +19,17 @@
   }
 
 document.addEventListener('DOMContentLoaded', () => {
-  // data dummy ntar tinggal ganti dengan api call di backend nya
-    const dummyKeywords = [
-      "jurnal sistem informasi", "jurnal sistem pakar diagnosa penyakit",
-      "jurnal sistem pendukung keputusan", "sistem temu kembali informasi",
-      "klasifikasi teks bahasa indonesia", "deep learning untuk klasifikasi citra",
-      "machine learning prediksi cuaca", "data mining algoritma apriori"
-    ];
+  // Autocomplete fetches from /api/autocomplete
+    let _acCache = {};
+    async function fetchSuggestions(query) {
+      if (_acCache[query]) return _acCache[query];
+      try {
+        const resp = await fetch('/api/autocomplete?q=' + encodeURIComponent(query));
+        const data = await resp.json();
+        _acCache[query] = data.suggestions || [];
+        return _acCache[query];
+      } catch { return []; }
+    }
     // 1. TAHAP PERANCANGAN (Membuat fungsi untuk fitur autocomplete)
     function setupAutocomplete(inputId, containerClass) {
       
@@ -37,9 +41,23 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!searchInput || !searchBox) return; 
 
       // Membuat wadah kotak dropdown <div> secara dinamis melalui JavaScript
-      const suggestionsBox = document.createElement('div');
+        const suggestionsBox = document.createElement('div');
       suggestionsBox.className = 'search-suggestions';
       searchBox.appendChild(suggestionsBox); // Memasukkan kotak dropdown ke dalam kotak pencarian utama
+
+      function escapeHtml(text) {
+        return String(text)
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#039;');
+      }
+
+      function escapeRegExp(text) {
+        return String(text).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      }
+
       const searchIcon = searchBox.querySelector('svg');
       if (searchIcon) {
         searchIcon.style.cursor = 'pointer';
@@ -65,6 +83,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
       }
       // Mendeteksi setiap kali user mengetik sesuatu di kolom input
+      let _debounceTimer;
       searchInput.addEventListener('input', function () {
         
         // Mengambil teks yang diketik, diubah ke huruf kecil semua, dan dihapus spasi lebihnya
@@ -73,11 +92,12 @@ document.addEventListener('DOMContentLoaded', () => {
         // Mengosongkan isi dropdown dari pencarian sebelumnya
         suggestionsBox.innerHTML = '';
 
-        // Jika user mengetik minimal 1 huruf
-        if (query.length > 0) {
-          
-          // Mencari kata di dummyKeywords yang mengandung teks yang diketik user
-          const matches = dummyKeywords.filter(item => item.toLowerCase().includes(query));
+        // Jika user mengetik minimal 2 huruf
+        if (query.length > 1) {
+          clearTimeout(_debounceTimer);
+          _debounceTimer = setTimeout(async () => {
+          // Fetch suggestions from API
+          const matches = await fetchSuggestions(query);
 
           // Jika ada kata yang cocok (ketemu)
           if (matches.length > 0) {
@@ -91,11 +111,12 @@ document.addEventListener('DOMContentLoaded', () => {
               
               // Ikon kaca pembesar untuk di sebelah kiri teks
               const icon = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>`;
-              const regex = new RegExp(`(${query})`, 'gi');
-              const highlightedText = match.replace(regex, '<span class="suggestion-match">$1</span>');
+              const safeMatch = escapeHtml(match);
+              const regex = new RegExp(`(${escapeRegExp(query)})`, 'gi');
+              const highlightedText = safeMatch.replace(regex, '<span class="suggestion-match">$1</span>');
 
               // Memasukkan ikon dan teks yang sudah di-highlight ke dalam baris
-              div.innerHTML = `${icon} <span>${highlightedText}</span>`;
+              div.innerHTML = `${icon}<span class="suggestion-text">${highlightedText}</span>`;
               
             div.addEventListener('click', () => {
                 // 1. Cukup isikan kata yang dipilih ke dalam kolom input
@@ -119,6 +140,7 @@ document.addEventListener('DOMContentLoaded', () => {
             suggestionsBox.classList.remove('active');
             searchBox.classList.remove('has-suggestions');
           }
+          }, 200);  // end setTimeout for debounce
         } else {
           // Jika user menghapus ketikannya sampai kosong, sembunyikan dropdown
           suggestionsBox.classList.remove('active');
@@ -139,9 +161,11 @@ document.addEventListener('DOMContentLoaded', () => {
         searchInput.addEventListener('keypress', function(e) {
           if (e.key === 'Enter' && this.value.trim()) {
             e.preventDefault();
-            // Cek sedang di halaman mana kita sekarang
-            const targetUrl = window.location.pathname.includes('/citation') ? '/citation' : '/search';
-            window.location.href = targetUrl + '?q=' + encodeURIComponent(this.value.trim());
+            if (window.location.pathname.includes('/citation')) {
+              // Let citation.html handle its own in-place fetch via keydown
+              return;
+            }
+            window.location.href = '/search?q=' + encodeURIComponent(this.value.trim());
           }
         });
       }
@@ -172,6 +196,15 @@ document.addEventListener('DOMContentLoaded', () => {
     if (answerQuery) {
       answerQuery.textContent = 'Query: ' + q;
     }
+
+    // 4. Update navbar links to preserve query across pages
+    const navLinks = document.querySelectorAll('.navbar-nav a');
+    navLinks.forEach(link => {
+      const href = link.getAttribute('href');
+      if (href === '/search' || href === '/citation') {
+        link.href = href + '?q=' + encodeURIComponent(q);
+      }
+    });
   }
   /* ---- Filter button toggle ---- */
   const filterBtn = document.getElementById('filter-btn');
