@@ -151,7 +151,7 @@
   <script src="/static/js/app.js"></script>
   <script src="/static/js/search.js"></script>
   <script>
-    // ── Dynamic Search Results ──
+    // ── Dynamic Search Results with Cache ──
     (function(){
       const params = new URLSearchParams(window.location.search);
       const q = params.get('q') || '';
@@ -170,173 +170,167 @@
         resultsView.style.display = 'block';
       }
 
-      // Search Result Cache — hindari re-fetch saat pindah tab
+      // ── Cache helpers (sessionStorage, 5 menit) ──
       const CACHE_TTL = 5 * 60 * 1000;
-      function getCacheKey(pg, md) { return 'srch_' + q + '_' + md + '_' + pg; }
-      function getCachedResult(pg, md) {
+      function cKey(pg, md) { return 'srch_' + q + '_' + md + '_' + pg; }
+      function getCache(pg, md) {
         try {
-          const raw = sessionStorage.getItem(getCacheKey(pg, md));
+          const raw = sessionStorage.getItem(cKey(pg, md));
           if (!raw) return null;
           const c = JSON.parse(raw);
-          if (Date.now() - c.ts > CACHE_TTL) { sessionStorage.removeItem(getCacheKey(pg, md)); return null; }
+          if (Date.now() - c.ts > CACHE_TTL) { sessionStorage.removeItem(cKey(pg, md)); return null; }
           return c.data;
         } catch { return null; }
       }
-      function setCacheResult(pg, md, data) {
-        try { sessionStorage.setItem(getCacheKey(pg, md), JSON.stringify({ data: data, ts: Date.now() })); } catch {}
+      function setCache(pg, md, data) {
+        try { sessionStorage.setItem(cKey(pg, md), JSON.stringify({ data, ts: Date.now() })); } catch {}
       }
 
       function doSearch(page, model) {
         if (!q) return;
         const m = model || document.getElementById('model-select').value;
 
-        // Cek cache dulu — langsung tampilkan tanpa fetch
-        const cached = getCachedResult(page, m);
+        // Cek cache — jika ada, render langsung tanpa fetch
+        const cached = getCache(page, m);
         if (cached) {
-          renderSearchData(cached, m, page);
+          renderResults(cached, page, m);
           return;
         }
-        const url = '/api/search?q=' + encodeURIComponent(q) + '&page=' + page + '&model=' + m + '&per_page=10';
 
+        const url = '/api/search?q=' + encodeURIComponent(q) + '&page=' + page + '&model=' + m + '&per_page=10';
         document.getElementById('results-list').innerHTML = '<p style="color:var(--text-muted);padding:24px 0;">Searching…</p>';
 
         fetch(url).then(r => r.json()).then(data => {
-          // Simpan ke cache
-          setCacheResult(page, m, data);
-          renderSearchData(data, m, page);
+          setCache(page, m, data);
+          renderResults(data, page, m);
         }).catch(err => {
           document.getElementById('results-list').innerHTML = '<p style="color:#ef4444;padding:24px 0;">Error: ' + err.message + '</p>';
         });
       }
 
-      function renderSearchData(data, m, page) {
-          // Query text
-          const qt = document.getElementById('query-text');
-          if (qt) qt.textContent = '"' + data.query + '"';
-          document.title = data.query + ' — ScholarSearch ID';
+      function renderResults(data, page, m) {
+        // Query text
+        const qt = document.getElementById('query-text');
+        if (qt) qt.textContent = '"' + data.query + '"';
+        document.title = data.query + ' — ScholarSearch ID';
 
-          // Meta
-          const meta = document.getElementById('results-meta');
-          if (meta) meta.textContent = data.total + ' ' + t('search.results_suffix') + ' (' + data.time_ms + ' ms) — ' + (data.model_used||'').toUpperCase();
+        // Meta
+        const meta = document.getElementById('results-meta');
+        if (meta) meta.textContent = data.total + ' ' + t('search.results_suffix') + ' (' + data.time_ms + ' ms) — ' + (data.model_used||'').toUpperCase();
 
-          // Spelling
-          const hint = document.getElementById('spelling-hint');
-          const link = document.getElementById('spelling-link');
-          if (data.suggestion && hint && link) {
-            hint.style.display = 'block';
-            link.textContent = data.suggestion;
-            link.href = '/search?q=' + encodeURIComponent(data.suggestion);
+        // Spelling
+        const hint = document.getElementById('spelling-hint');
+        const link = document.getElementById('spelling-link');
+        if (data.suggestion && hint && link) {
+          hint.style.display = 'block';
+          link.textContent = data.suggestion;
+          link.href = '/search?q=' + encodeURIComponent(data.suggestion);
+        }
+
+        // Query expansion info
+        if (data.expanded_query) {
+          let expBox = document.getElementById('expansion-hint');
+          if (!expBox) {
+            expBox = document.createElement('div');
+            expBox.id = 'expansion-hint';
+            expBox.style.cssText = 'padding:8px 14px;background:rgba(37,99,235,0.08);border:1px solid rgba(37,99,235,0.2);border-radius:8px;font-size:13px;color:var(--text-sec);margin-bottom:16px;';
+            const hint2 = document.getElementById('spelling-hint');
+            if (hint2) hint2.parentNode.insertBefore(expBox, hint2.nextSibling);
+            else document.getElementById('results-list').parentNode.insertBefore(expBox, document.getElementById('results-list'));
           }
+          expBox.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:inline;vertical-align:-2px;margin-right:6px;"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>' + t('search.query_expanded') + ' <strong>' + data.expanded_query + '</strong>';
+          expBox.style.display = 'block';
+        }
 
-          // Query expansion info
-          if (data.expanded_query) {
-            let expBox = document.getElementById('expansion-hint');
-            if (!expBox) {
-              expBox = document.createElement('div');
-              expBox.id = 'expansion-hint';
-              expBox.style.cssText = 'padding:8px 14px;background:rgba(37,99,235,0.08);border:1px solid rgba(37,99,235,0.2);border-radius:8px;font-size:13px;color:var(--text-sec);margin-bottom:16px;';
-              const hint = document.getElementById('spelling-hint');
-              if (hint) hint.parentNode.insertBefore(expBox, hint.nextSibling);
-              else document.getElementById('results-list').parentNode.insertBefore(expBox, document.getElementById('results-list'));
-            }
-            expBox.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:inline;vertical-align:-2px;margin-right:6px;"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>' + t('search.query_expanded') + ' <strong>' + data.expanded_query + '</strong>';
-            expBox.style.display = 'block';
-          }
+        // Results
+        const list = document.getElementById('results-list');
+        if (!data.results || data.results.length === 0) {
+          list.innerHTML = '<p style="color:var(--text-sec);padding:32px 0;text-align:center;font-size:15px;">' + t('search.no_results') + '</p>';
+          return;
+        }
+        list.innerHTML = '';
 
-          // Results
-          const list = document.getElementById('results-list');
-          if (!data.results || data.results.length === 0) {
-            list.innerHTML = '<p style="color:var(--text-sec);padding:32px 0;text-align:center;font-size:15px;">' + t('search.no_results') + '</p>';
-            return;
-          }
-          list.innerHTML = '';
-          
-          // Get saved paper IDs for current user to show correct icon state
-          fetch('/api/library/ids').then(r => r.json()).then(savedData => {
-            const savedIds = new Set(savedData.ids || []);
-            
-            data.results.forEach((r, i) => {
-              const authors = Array.isArray(r.authors) ? r.authors.join(', ') : (r.authors||'');
-              const abstract = (r.abstract||'').substring(0, 300) + ((r.abstract||'').length > 300 ? '…' : '');
-              const isSaved = savedIds.has(r.id);
-              const saveIcon = isSaved ? 'M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z' : 'M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z';
-              const saveFill = isSaved ? 'currentColor' : 'none';
-              const saveColor = isSaved ? '#2563eb' : 'currentColor';
-              
-              const card = document.createElement('article');
-              card.className = 'result-card reveal';
-              card.style.transitionDelay = (i * 0.06) + 's';
-              card.innerHTML =
-                '<h3><a href="' + (r.url||'#') + '" target="_blank">' + r.title + '</a></h3>' +
-                '<div class="result-meta"><span>' + authors + '</span><span class="dot">·</span><span>' + (r.journal||'') + '</span><span class="dot">·</span><span>' + (r.year||'') + '</span></div>' +
-                '<p class="result-abstract">' + abstract + '</p>' +
-                '<div class="result-footer"><div class="result-badges"><span class="badge">' + (r.model||'').toUpperCase() + ': ' + r.score + '</span></div>' +
-                '<div class="result-actions" style="display:flex;gap:12px;align-items:center;">' +
-                '<button class="save-btn" aria-label="' + (isSaved ? t('search.saved') : t('search.save')) + '" data-id="' + r.id + '" data-saved="' + isSaved + '" style="background:none;border:none;cursor:pointer;color:'+saveColor+';display:flex;align-items:center;gap:4px;font-size:13px;font-weight:500;">' +
-                '<svg width="16" height="16" viewBox="0 0 24 24" fill="'+saveFill+'" stroke="currentColor" stroke-width="2"><path d="'+saveIcon+'"/></svg>' +
-                (isSaved ? t('search.saved') : t('search.save')) + '</button>' +
-                '<a href="' + (r.url||'#') + '" target="_blank" class="view-paper" rel="noopener">' + t('search.view_paper') + ' <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></a>' +
-                '</div></div>';
-              list.appendChild(card);
-              requestAnimationFrame(() => card.classList.add('visible'));
-            });
-            
-            // Attach save event listeners
-            document.querySelectorAll('.save-btn').forEach(btn => {
-               btn.addEventListener('click', function() {
-                  const pid = parseInt(this.getAttribute('data-id'));
-                  const saved = this.getAttribute('data-saved') === 'true';
-                  const endpoint = saved ? '/api/library/unsave' : '/api/library/save';
-                  
-                  fetch(endpoint, {
-                     method: 'POST',
-                     headers: {'Content-Type': 'application/json'},
-                     body: JSON.stringify({paper_id: pid})
-                  }).then(res => {
-                     if (res.status === 401) { window.location.href = '/signin'; return; }
-                     return res.json();
-                  }).then(resData => {
-                     if (resData && (resData.status === 'saved' || resData.status === 'unsaved')) {
-                        const newSaved = !saved;
-                        this.setAttribute('data-saved', newSaved);
-                        this.setAttribute('aria-label', newSaved ? 'Saved' : 'Save');
-                        this.style.color = newSaved ? '#2563eb' : 'var(--text-sec)';
-                        this.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="'+(newSaved?'currentColor':'none')+'" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>' + (newSaved?'Saved':'Save');
-                     }
-                  });
-               });
-            });
-            
+        // Get saved paper IDs for current user
+        fetch('/api/library/ids').then(r => r.json()).then(savedData => {
+          const savedIds = new Set(savedData.ids || []);
 
-          }).catch(() => {
-             // Fallback if not logged in
-             data.results.forEach((r, i) => {
-               const authors = Array.isArray(r.authors) ? r.authors.join(', ') : (r.authors||'');
-               const abstract = (r.abstract||'').substring(0, 300) + ((r.abstract||'').length > 300 ? '…' : '');
-               const card = document.createElement('article');
-               card.className = 'result-card reveal';
-               card.style.transitionDelay = (i * 0.06) + 's';
-               card.innerHTML =
-                 '<h3><a href="' + (r.url||'#') + '" target="_blank">' + r.title + '</a></h3>' +
-                 '<div class="result-meta"><span>' + authors + '</span><span class="dot">·</span><span>' + (r.journal||'') + '</span><span class="dot">·</span><span>' + (r.year||'') + '</span></div>' +
-                 '<p class="result-abstract">' + abstract + '</p>' +
-                 '<div class="result-footer"><div class="result-badges"><span class="badge">' + (r.model||'').toUpperCase() + ': ' + r.score + '</span></div>' +
-                 '<div class="result-actions" style="display:flex;gap:12px;align-items:center;">' +
-                 '<button class="save-btn" aria-label="Save" onclick="window.location.href=\'/signin\'" style="background:none;border:none;cursor:pointer;color:var(--text-sec);display:flex;align-items:center;gap:4px;font-size:13px;font-weight:500;">' +
-                 '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>Save</button>' +
-                 '<a href="' + (r.url||'#') + '" target="_blank" class="view-paper" rel="noopener">View paper <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></a>' +
-                 '</div></div>';
-               list.appendChild(card);
-               requestAnimationFrame(() => card.classList.add('visible'));
+          data.results.forEach((r, i) => {
+            const authors = Array.isArray(r.authors) ? r.authors.join(', ') : (r.authors||'');
+            const abstract = (r.abstract||'').substring(0, 300) + ((r.abstract||'').length > 300 ? '…' : '');
+            const isSaved = savedIds.has(r.id);
+            const saveFill = isSaved ? 'currentColor' : 'none';
+            const saveColor = isSaved ? '#2563eb' : 'currentColor';
+
+            const card = document.createElement('article');
+            card.className = 'result-card reveal';
+            card.style.transitionDelay = (i * 0.06) + 's';
+            card.innerHTML =
+              '<h3><a href="' + (r.url||'#') + '" target="_blank">' + r.title + '</a></h3>' +
+              '<div class="result-meta"><span>' + authors + '</span><span class="dot">·</span><span>' + (r.journal||'') + '</span><span class="dot">·</span><span>' + (r.year||'') + '</span></div>' +
+              '<p class="result-abstract">' + abstract + '</p>' +
+              '<div class="result-footer"><div class="result-badges"><span class="badge">' + (r.model||'').toUpperCase() + ': ' + r.score + '</span></div>' +
+              '<div class="result-actions" style="display:flex;gap:12px;align-items:center;">' +
+              '<button class="save-btn" aria-label="' + (isSaved ? t('search.saved') : t('search.save')) + '" data-id="' + r.id + '" data-saved="' + isSaved + '" style="background:none;border:none;cursor:pointer;color:'+saveColor+';display:flex;align-items:center;gap:4px;font-size:13px;font-weight:500;">' +
+              '<svg width="16" height="16" viewBox="0 0 24 24" fill="'+saveFill+'" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>' +
+              (isSaved ? t('search.saved') : t('search.save')) + '</button>' +
+              '<a href="' + (r.url||'#') + '" target="_blank" class="view-paper" rel="noopener">' + t('search.view_paper') + ' <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></a>' +
+              '</div></div>';
+            list.appendChild(card);
+            requestAnimationFrame(() => card.classList.add('visible'));
+          });
+
+          // Attach save event listeners
+          document.querySelectorAll('.save-btn').forEach(btn => {
+             btn.addEventListener('click', function() {
+                const pid = parseInt(this.getAttribute('data-id'));
+                const saved = this.getAttribute('data-saved') === 'true';
+                const endpoint = saved ? '/api/library/unsave' : '/api/library/save';
+
+                fetch(endpoint, {
+                   method: 'POST',
+                   headers: {'Content-Type': 'application/json'},
+                   body: JSON.stringify({paper_id: pid})
+                }).then(res => {
+                   if (res.status === 401) { window.location.href = '/signin'; return; }
+                   return res.json();
+                }).then(resData => {
+                   if (resData && (resData.status === 'saved' || resData.status === 'unsaved')) {
+                      const newSaved = !saved;
+                      this.setAttribute('data-saved', newSaved);
+                      this.setAttribute('aria-label', newSaved ? 'Saved' : 'Save');
+                      this.style.color = newSaved ? '#2563eb' : 'var(--text-sec)';
+                      this.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="'+(newSaved?'currentColor':'none')+'" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>' + (newSaved?'Saved':'Save');
+                   }
+                });
              });
           });
 
-          // Pagination
-          const totalPages = Math.ceil(data.total / (data.per_page||10));
-          renderPagination(currentPage, totalPages, m);
-        }).catch(err => {
-          document.getElementById('results-list').innerHTML = '<p style="color:#ef4444;padding:24px 0;">Error: ' + err.message + '</p>';
+        }).catch(() => {
+           // Fallback if not logged in
+           data.results.forEach((r, i) => {
+             const authors = Array.isArray(r.authors) ? r.authors.join(', ') : (r.authors||'');
+             const abstract = (r.abstract||'').substring(0, 300) + ((r.abstract||'').length > 300 ? '…' : '');
+             const card = document.createElement('article');
+             card.className = 'result-card reveal';
+             card.style.transitionDelay = (i * 0.06) + 's';
+             card.innerHTML =
+               '<h3><a href="' + (r.url||'#') + '" target="_blank">' + r.title + '</a></h3>' +
+               '<div class="result-meta"><span>' + authors + '</span><span class="dot">·</span><span>' + (r.journal||'') + '</span><span class="dot">·</span><span>' + (r.year||'') + '</span></div>' +
+               '<p class="result-abstract">' + abstract + '</p>' +
+               '<div class="result-footer"><div class="result-badges"><span class="badge">' + (r.model||'').toUpperCase() + ': ' + r.score + '</span></div>' +
+               '<div class="result-actions" style="display:flex;gap:12px;align-items:center;">' +
+               '<button class="save-btn" aria-label="Save" onclick="window.location.href=\'/signin\'" style="background:none;border:none;cursor:pointer;color:var(--text-sec);display:flex;align-items:center;gap:4px;font-size:13px;font-weight:500;">' +
+               '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>Save</button>' +
+               '<a href="' + (r.url||'#') + '" target="_blank" class="view-paper" rel="noopener">View paper <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></a>' +
+               '</div></div>';
+             list.appendChild(card);
+             requestAnimationFrame(() => card.classList.add('visible'));
+           });
         });
+
+        // Pagination
+        const totalPages = Math.ceil(data.total / (data.per_page||10));
+        renderPagination(currentPage, totalPages, m);
       }
 
       function renderPagination(page, total, model) {
@@ -433,5 +427,3 @@
   </script>
 </body>
 </html>
-
-
