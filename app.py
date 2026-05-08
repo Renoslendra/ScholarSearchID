@@ -9,7 +9,10 @@ import os
 import secrets
 import time
 import uuid
+import hashlib
+import json
 from typing import Any
+from functools import lru_cache
 
 from dotenv import load_dotenv
 load_dotenv()  # Load .env file
@@ -68,6 +71,9 @@ def apply_security_headers(response):
         "connect-src 'self' https:; "
         "frame-ancestors 'self';"
     )
+    # Cache static files (CSS, JS, images) agar browser tidak request ulang
+    if request.path.startswith("/static/"):
+        response.headers["Cache-Control"] = "public, max-age=3600"  # 1 jam
     return response
 
 
@@ -120,6 +126,30 @@ _index: InvertedIndex | None = None
 _papers: list[dict[str, Any]] = []
 _papers_by_id: dict[int, dict[str, Any]] = {}
 _pagerank: dict[int, float] = {}
+
+# ── Server-side Search Cache (mengurangi CPU load saat banyak user) ──
+_search_cache: dict[str, tuple[float, Any]] = {}  # key -> (timestamp, result)
+SEARCH_CACHE_TTL = 300  # 5 menit
+SEARCH_CACHE_MAX = 200  # Maksimal 200 query di cache
+
+
+def _get_cached_search(cache_key: str):
+    """Return cached search result if still valid, else None."""
+    if cache_key in _search_cache:
+        ts, result = _search_cache[cache_key]
+        if time.time() - ts < SEARCH_CACHE_TTL:
+            return result
+        del _search_cache[cache_key]  # Expired
+    return None
+
+
+def _set_cached_search(cache_key: str, result: Any):
+    """Store search result in cache. Evict oldest if full."""
+    # Evict oldest entries if cache is full
+    if len(_search_cache) >= SEARCH_CACHE_MAX:
+        oldest_key = min(_search_cache, key=lambda k: _search_cache[k][0])
+        del _search_cache[oldest_key]
+    _search_cache[cache_key] = (time.time(), result)
 
 
 def _ensure_loaded() -> InvertedIndex:
@@ -453,10 +483,10 @@ def api_stats():
 
 @app.get("/api/search")
 def api_search():
-    """Main search endpoint — powers the Search page."""
-    t0 = time.perf_counter()
+    """Main search endpoint — powers the Search page. Includes server-side cache."""
     idx = _ensure_loaded()
 
+    # Build cache key dari semua parameter
     q = request.args.get("q", "").strip()
     page = request.args.get("page", 1, type=int)
     per_page = request.args.get("per_page", config.DEFAULT_PAGE_SIZE, type=int)
@@ -464,6 +494,17 @@ def api_search():
     model = request.args.get("model", "bm25")
     k1 = request.args.get("k1", config.BM25_K1, type=float)
     b = request.args.get("b", config.BM25_B, type=float)
+
+    cache_key = hashlib.md5(f"{q}|{model}|{page}|{per_page}|{k1}|{b}".encode()).hexdigest()
+
+    # Cek cache server-side
+    cached = _get_cached_search(cache_key)
+    if cached is not None:
+        return jsonify(cached)
+
+    t0 = time.perf_counter()
+
+    # Parameter sudah diambil di atas (sebelum cache check)
 
     if not q:
         return jsonify({"query": "", "results": [], "total": 0, "page": 1})
@@ -493,7 +534,7 @@ def api_search():
 
     elapsed = round((time.perf_counter() - t0) * 1000, 1)
 
-    return jsonify({
+    response_data = {
         "query": q,
         "results": results,
         "total": total,
@@ -503,7 +544,10 @@ def api_search():
         "model_used": model,
         "suggestion": suggestion,
         "expanded_query": expanded_str,
-    })
+    }
+    # Simpan ke server cache
+    _set_cached_search(cache_key, response_data)
+    return jsonify(response_data)
 
 
 @app.get("/api/answer")
