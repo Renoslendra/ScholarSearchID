@@ -170,14 +170,46 @@
         resultsView.style.display = 'block';
       }
 
+      // Search Result Cache — hindari re-fetch saat pindah tab
+      const CACHE_TTL = 5 * 60 * 1000;
+      function getCacheKey(pg, md) { return 'srch_' + q + '_' + md + '_' + pg; }
+      function getCachedResult(pg, md) {
+        try {
+          const raw = sessionStorage.getItem(getCacheKey(pg, md));
+          if (!raw) return null;
+          const c = JSON.parse(raw);
+          if (Date.now() - c.ts > CACHE_TTL) { sessionStorage.removeItem(getCacheKey(pg, md)); return null; }
+          return c.data;
+        } catch { return null; }
+      }
+      function setCacheResult(pg, md, data) {
+        try { sessionStorage.setItem(getCacheKey(pg, md), JSON.stringify({ data: data, ts: Date.now() })); } catch {}
+      }
+
       function doSearch(page, model) {
         if (!q) return;
         const m = model || document.getElementById('model-select').value;
+
+        // Cek cache dulu — langsung tampilkan tanpa fetch
+        const cached = getCachedResult(page, m);
+        if (cached) {
+          renderSearchData(cached, m, page);
+          return;
+        }
         const url = '/api/search?q=' + encodeURIComponent(q) + '&page=' + page + '&model=' + m + '&per_page=10';
 
         document.getElementById('results-list').innerHTML = '<p style="color:var(--text-muted);padding:24px 0;">Searching…</p>';
 
         fetch(url).then(r => r.json()).then(data => {
+          // Simpan ke cache
+          setCacheResult(page, m, data);
+          renderSearchData(data, m, page);
+        }).catch(err => {
+          document.getElementById('results-list').innerHTML = '<p style="color:#ef4444;padding:24px 0;">Error: ' + err.message + '</p>';
+        });
+      }
+
+      function renderSearchData(data, m, page) {
           // Query text
           const qt = document.getElementById('query-text');
           if (qt) qt.textContent = '"' + data.query + '"';
