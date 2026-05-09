@@ -107,29 +107,31 @@
   // Event listener untuk menjalankan siklus animasi teks setelah halaman termuat
   document.addEventListener('DOMContentLoaded', () => {
     const targetEl = document.getElementById('decrypted-text');
-    if (targetEl) {
-      if (window.matchMedia('(max-width: 768px)').matches) {
-        const theme = PHRASE_THEMES[0];
-        targetEl.textContent = 'SearchScholar';
-        targetEl.style.setProperty('--theme-color', theme.color);
-        targetEl.style.setProperty('--glow-color', theme.glow + '0.45)');
-        return;
-      }
+    if (!targetEl) return;
 
-      const decryptor = new Decryptor(targetEl);
-      let currentIndex = 0;
-      async function cycleText() {
-        const theme = PHRASE_THEMES[currentIndex];
-        targetEl.style.setProperty('--theme-color', theme.color);
-        targetEl.style.setProperty('--glow-color', theme.glow + '0.6)');
-        await decryptor.setText(theme.text);
-        setTimeout(() => {
-          currentIndex = (currentIndex + 1) % PHRASE_THEMES.length;
-          cycleText();
-        }, 3500);
-      }
-      cycleText();
+    // Hormati preferensi user yang mengaktifkan "reduce motion" (a11y)
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReducedMotion) {
+      const theme = PHRASE_THEMES[0];
+      targetEl.textContent = theme.text;
+      targetEl.style.setProperty('--theme-color', theme.color);
+      targetEl.style.setProperty('--glow-color', theme.glow + '0.45)');
+      return;
     }
+
+    const decryptor = new Decryptor(targetEl);
+    let currentIndex = 0;
+    async function cycleText() {
+      const theme = PHRASE_THEMES[currentIndex];
+      targetEl.style.setProperty('--theme-color', theme.color);
+      targetEl.style.setProperty('--glow-color', theme.glow + '0.6)');
+      await decryptor.setText(theme.text);
+      setTimeout(() => {
+        currentIndex = (currentIndex + 1) % PHRASE_THEMES.length;
+        cycleText();
+      }, 3500);
+    }
+    cycleText();
   });
 
   // ═══════════════════════════════════════════
