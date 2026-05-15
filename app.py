@@ -732,16 +732,6 @@ def api_autocomplete():
 
 
 # ═════════════════════════════════════════════════════════════
-# EAGER WARM-UP: Load index saat server mulai, BUKAN saat user pertama datang.
-# Ini membuat cold start terjadi di background, bukan di depan user.
-# ═════════════════════════════════════════════════════════════
-try:
-    _ensure_loaded()
-    print(f"  ✅ Warm-up selesai: {_index.doc_count} docs, {len(_papers)} papers, {len(_pagerank)} pagerank nodes")
-except Exception as e:
-    print(f"  ⚠️ Warm-up gagal (akan dicoba lagi saat request): {e}")
-
-# ═════════════════════════════════════════════════════════════
 
 if __name__ == "__main__":
     debug = os.environ.get("FLASK_ENV") != "production"
