@@ -281,7 +281,19 @@ def register():
 
 @app.get("/health")
 def health_check():
-    return {"status": "ok"}
+    """Health check + warm-up: memastikan index sudah di-memory.
+    Dipanggil oleh UptimeRobot tiap 5 menit agar server tidak pernah idle/mati.
+    """
+    try:
+        idx = _ensure_loaded()
+        return {
+            "status": "ok",
+            "docs": idx.doc_count,
+            "papers": len(_papers),
+            "pagerank_nodes": len(_pagerank),
+        }
+    except Exception as e:
+        return {"status": "error", "message": str(e)}, 500
 
 
 @app.post("/api/register")
@@ -718,6 +730,16 @@ def api_autocomplete():
 
     return jsonify({"suggestions": matches})
 
+
+# ═════════════════════════════════════════════════════════════
+# EAGER WARM-UP: Load index saat server mulai, BUKAN saat user pertama datang.
+# Ini membuat cold start terjadi di background, bukan di depan user.
+# ═════════════════════════════════════════════════════════════
+try:
+    _ensure_loaded()
+    print(f"  ✅ Warm-up selesai: {_index.doc_count} docs, {len(_papers)} papers, {len(_pagerank)} pagerank nodes")
+except Exception as e:
+    print(f"  ⚠️ Warm-up gagal (akan dicoba lagi saat request): {e}")
 
 # ═════════════════════════════════════════════════════════════
 
