@@ -6,6 +6,7 @@ Serves both HTML templates and JSON API endpoints for the IR system.
 from __future__ import annotations
 
 import os
+import re
 import secrets
 import time
 import uuid
@@ -126,11 +127,19 @@ _index: InvertedIndex | None = None
 _papers: list[dict[str, Any]] = []
 _papers_by_id: dict[int, dict[str, Any]] = {}
 _pagerank: dict[int, float] = {}
+_autocomplete_entries: list[tuple[str, str]] = []
+_autocomplete_prefix: dict[str, list[str]] = {}
+_autocomplete_cache: dict[str, list[str]] = {}
 
 # ── Server-side Search Cache (mengurangi CPU load saat banyak user) ──
 _search_cache: dict[str, tuple[float, Any]] = {}  # key -> (timestamp, result)
 SEARCH_CACHE_TTL = 300  # 5 menit
 SEARCH_CACHE_MAX = 200  # Maksimal 200 query di cache
+AUTOCOMPLETE_DEFAULT_LIMIT = 8
+AUTOCOMPLETE_MAX_LIMIT = 12
+AUTOCOMPLETE_PREFIX_MIN = 2
+AUTOCOMPLETE_PREFIX_MAX = 32
+AUTOCOMPLETE_PREFIX_BUCKET_MAX = 96
 
 
 def _get_cached_search(cache_key: str):
@@ -152,19 +161,107 @@ def _set_cached_search(cache_key: str, result: Any):
     _search_cache[cache_key] = (time.time(), result)
 
 
+def _ensure_papers_loaded() -> list[dict[str, Any]]:
+    """Load paper metadata without forcing the heavier retrieval index."""
+    global _papers, _papers_by_id
+    if not _papers:
+        _papers = database.get_all_papers()
+        _papers_by_id = {p["id"]: p for p in _papers if "id" in p}
+    return _papers
+
+
 def _ensure_loaded() -> InvertedIndex:
     """Load index + paper data once, then cache."""
     global _index, _papers, _papers_by_id, _pagerank
     if _index is not None and _index.doc_count > 0:
         return _index
     _index = load_or_build_index()
-    _papers = database.get_all_papers()
-    _papers_by_id = {p["id"]: p for p in _papers}
+    _ensure_papers_loaded()
     # Compute PageRank from citations (if any)
     edges = database.get_citation_edges()
     if edges:
         _pagerank = compute_pagerank(edges)
     return _index
+
+
+def _normalize_autocomplete_text(text: str) -> str:
+    return " ".join(str(text or "").casefold().split())
+
+
+def _autocomplete_words(text: str) -> list[str]:
+    return re.findall(r"[^\W_]+", text, flags=re.UNICODE)
+
+
+def _ensure_autocomplete_ready() -> None:
+    """Build a lightweight in-memory title index for instant autocomplete."""
+    global _autocomplete_entries, _autocomplete_prefix
+    if _autocomplete_entries:
+        return
+
+    entries: list[tuple[str, str]] = []
+    prefix_index: dict[str, list[str]] = {}
+    for paper in _ensure_papers_loaded():
+        title = str(paper.get("title", "")).strip()
+        if not title:
+            continue
+
+        normalized = _normalize_autocomplete_text(title)
+        entries.append((normalized, title))
+
+        seen_prefixes: set[str] = set()
+        for word in _autocomplete_words(normalized):
+            max_size = min(len(word), AUTOCOMPLETE_PREFIX_MAX)
+            for size in range(AUTOCOMPLETE_PREFIX_MIN, max_size + 1):
+                prefix = word[:size]
+                if prefix in seen_prefixes:
+                    continue
+                seen_prefixes.add(prefix)
+                bucket = prefix_index.setdefault(prefix, [])
+                if len(bucket) < AUTOCOMPLETE_PREFIX_BUCKET_MAX:
+                    bucket.append(title)
+
+    _autocomplete_entries = entries
+    _autocomplete_prefix = prefix_index
+
+
+def _autocomplete_lookup(query: str, limit: int = AUTOCOMPLETE_DEFAULT_LIMIT) -> list[str]:
+    _ensure_autocomplete_ready()
+    q = _normalize_autocomplete_text(query)
+    if len(q) < AUTOCOMPLETE_PREFIX_MIN:
+        return []
+
+    limit = max(1, min(limit, AUTOCOMPLETE_MAX_LIMIT))
+    cache_key = f"{q}|{limit}"
+    if cache_key in _autocomplete_cache:
+        return _autocomplete_cache[cache_key]
+
+    matches: list[str] = []
+    seen: set[str] = set()
+
+    def add(title: str) -> bool:
+        if title in seen:
+            return len(matches) >= limit
+        seen.add(title)
+        matches.append(title)
+        return len(matches) >= limit
+
+    if " " not in q:
+        for title in _autocomplete_prefix.get(q, []):
+            if add(title):
+                break
+
+    if len(matches) < limit:
+        terms = q.split()
+        for normalized_title, title in _autocomplete_entries:
+            if title in seen:
+                continue
+            if all(term in normalized_title for term in terms) and add(title):
+                break
+
+    if len(_autocomplete_cache) > 500:
+        _autocomplete_cache.clear()
+    _autocomplete_cache[cache_key] = matches
+    return matches
 
 
 # ── Helper: run a ranking model ──────────────────────────────
@@ -226,6 +323,7 @@ def _enrich_results(
 
 @app.route("/")
 def index():
+    _ensure_autocomplete_ready()
     return render_template("index.html")
 
 
@@ -713,22 +811,24 @@ def api_feedback():
 
 @app.get("/api/autocomplete")
 def api_autocomplete():
-    """Return autocomplete suggestions from index vocabulary."""
-    idx = _ensure_loaded()
-    q = request.args.get("q", "").strip().lower()
-    if not q or len(q) < 2:
-        return jsonify({"suggestions": []})
+    """Return title suggestions from a lightweight autocomplete cache."""
+    q = request.args.get("q", "").strip()
+    limit = request.args.get("limit", AUTOCOMPLETE_DEFAULT_LIMIT, type=int)
+    response = jsonify({"suggestions": _autocomplete_lookup(q, limit)})
+    response.headers["Cache-Control"] = "public, max-age=60"
+    return response
 
-    # Match from paper titles
-    matches: list[str] = []
-    for paper in _papers:
-        title = paper.get("title", "")
-        if q in title.lower():
-            matches.append(title)
-            if len(matches) >= 8:
-                break
 
-    return jsonify({"suggestions": matches})
+@app.get("/api/autocomplete/bootstrap")
+def api_autocomplete_bootstrap():
+    """Return all autocomplete titles so the browser can suggest locally."""
+    _ensure_autocomplete_ready()
+    response = jsonify({
+        "version": len(_autocomplete_entries),
+        "titles": [title for _, title in _autocomplete_entries],
+    })
+    response.headers["Cache-Control"] = "public, max-age=3600"
+    return response
 
 
 # ═════════════════════════════════════════════════════════════

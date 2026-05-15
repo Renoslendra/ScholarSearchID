@@ -19,54 +19,206 @@
   }
 
 document.addEventListener('DOMContentLoaded', () => {
-  // Autocomplete fetches from /api/autocomplete
-    let _acCache = {};
-    async function fetchSuggestions(query) {
-      if (_acCache[query]) return _acCache[query];
-      try {
-        const resp = await fetch('/api/autocomplete?q=' + encodeURIComponent(query));
-        const data = await resp.json();
-        _acCache[query] = data.suggestions || [];
-        return _acCache[query];
-      } catch { return []; }
+    const AUTOCOMPLETE_STORAGE_KEY = 'scholarsearch.autocomplete.titles.v1';
+    const AUTOCOMPLETE_LIMIT = 8;
+    const AUTOCOMPLETE_MIN_CHARS = 2;
+    let _acCache = Object.create(null);
+    let _acTitleIndex = [];
+    let _acTitlesReady = false;
+    let _acPreloadPromise = null;
+
+    function normalizeText(text) {
+      return String(text || '')
+        .toLowerCase()
+        .normalize('NFKD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/\s+/g, ' ')
+        .trim();
     }
-    // 1. TAHAP PERANCANGAN (Membuat fungsi untuk fitur autocomplete)
+
+    function setAutocompleteTitles(titles) {
+      const unique = [];
+      const seen = new Set();
+      titles.forEach(title => {
+        const cleanTitle = String(title || '').trim();
+        if (!cleanTitle || seen.has(cleanTitle)) return;
+        seen.add(cleanTitle);
+        unique.push(cleanTitle);
+      });
+
+      _acTitleIndex = unique.map(title => ({
+        title,
+        normalized: normalizeText(title)
+      }));
+      _acTitlesReady = _acTitleIndex.length > 0;
+      _acCache = Object.create(null);
+    }
+
+    function loadStoredAutocomplete() {
+      try {
+        const cached = JSON.parse(localStorage.getItem(AUTOCOMPLETE_STORAGE_KEY) || '{}');
+        if (Array.isArray(cached.titles)) {
+          setAutocompleteTitles(cached.titles);
+        }
+      } catch {
+        // Ignore broken local autocomplete cache.
+      }
+    }
+
+    function preloadAutocomplete() {
+      if (_acPreloadPromise) return _acPreloadPromise;
+
+      _acPreloadPromise = fetch('/api/autocomplete/bootstrap', { cache: 'force-cache' })
+        .then(resp => resp.ok ? resp.json() : null)
+        .then(data => {
+          if (!data || !Array.isArray(data.titles)) return;
+          setAutocompleteTitles(data.titles);
+          try {
+            localStorage.setItem(AUTOCOMPLETE_STORAGE_KEY, JSON.stringify({
+              version: data.version || data.titles.length,
+              titles: data.titles
+            }));
+          } catch {
+            // Local storage can be full or disabled; autocomplete still works via memory/API.
+          }
+        })
+        .catch(() => {});
+
+      return _acPreloadPromise;
+    }
+
+    function getLocalSuggestions(query, limit = AUTOCOMPLETE_LIMIT) {
+      const normalizedQuery = normalizeText(query);
+      if (normalizedQuery.length < AUTOCOMPLETE_MIN_CHARS || !_acTitleIndex.length) {
+        return [];
+      }
+
+      const terms = normalizedQuery.split(' ').filter(Boolean);
+      const singleTerm = terms.length === 1;
+      const matches = [];
+      const seen = new Set();
+
+      function add(item) {
+        if (seen.has(item.title)) return matches.length >= limit;
+        seen.add(item.title);
+        matches.push(item.title);
+        return matches.length >= limit;
+      }
+
+      if (singleTerm) {
+        for (const item of _acTitleIndex) {
+          const words = item.normalized.split(' ');
+          if (words.some(word => word.startsWith(normalizedQuery)) && add(item)) {
+            return matches;
+          }
+        }
+      }
+
+      for (const item of _acTitleIndex) {
+        if (seen.has(item.title)) continue;
+        if (terms.every(term => item.normalized.includes(term)) && add(item)) {
+          break;
+        }
+      }
+
+      return matches;
+    }
+
+    async function fetchSuggestions(query, signal) {
+      const cacheKey = normalizeText(query);
+      if (_acCache[cacheKey]) return _acCache[cacheKey];
+
+      const localMatches = getLocalSuggestions(query);
+      if (localMatches.length || _acTitlesReady) {
+        _acCache[cacheKey] = localMatches;
+        return localMatches;
+      }
+
+      try {
+        const resp = await fetch('/api/autocomplete?q=' + encodeURIComponent(query) + '&limit=' + AUTOCOMPLETE_LIMIT, { signal });
+        const data = await resp.json();
+        const suggestions = data.suggestions || [];
+        _acCache[cacheKey] = suggestions;
+        return suggestions;
+      } catch (err) {
+        if (err && err.name === 'AbortError') throw err;
+        return [];
+      }
+    }
+
+    function escapeHtml(text) {
+      return String(text)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    function escapeRegExp(text) {
+      return String(text).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    }
+
     function setupAutocomplete(inputId, containerClass) {
-      
-      // Mencari elemen HTML berdasarkan ID dan Class yang dikirimkan
       const searchInput = document.getElementById(inputId);
       const searchBox = document.querySelector(containerClass);
 
-      // Jika elemen tidak ditemukan di halaman ini, hentikan fungsi agar tidak error
-      if (!searchInput || !searchBox) return; 
+      if (!searchInput || !searchBox) return;
 
-      // Membuat wadah kotak dropdown <div> secara dinamis melalui JavaScript
-        const suggestionsBox = document.createElement('div');
+      const suggestionsBox = document.createElement('div');
       suggestionsBox.className = 'search-suggestions';
-      searchBox.appendChild(suggestionsBox); // Memasukkan kotak dropdown ke dalam kotak pencarian utama
+      searchBox.appendChild(suggestionsBox);
 
-      function escapeHtml(text) {
-        return String(text)
-          .replace(/&/g, '&amp;')
-          .replace(/</g, '&lt;')
-          .replace(/>/g, '&gt;')
-          .replace(/"/g, '&quot;')
-          .replace(/'/g, '&#039;');
+      function hideSuggestions() {
+        suggestionsBox.innerHTML = '';
+        suggestionsBox.classList.remove('active');
+        searchBox.classList.remove('has-suggestions');
       }
 
-      function escapeRegExp(text) {
-        return String(text).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      function renderSuggestions(matches, query) {
+        suggestionsBox.innerHTML = '';
+        if (!matches.length) {
+          hideSuggestions();
+          return;
+        }
+
+        const terms = normalizeText(query).split(' ').filter(Boolean).map(escapeRegExp);
+        const regex = terms.length ? new RegExp('(' + terms.join('|') + ')', 'gi') : null;
+        const icon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>';
+        const fragment = document.createDocumentFragment();
+
+        matches.forEach(match => {
+          const div = document.createElement('div');
+          div.className = 'suggestion-item';
+
+          const safeMatch = escapeHtml(match);
+          const highlightedText = regex
+            ? safeMatch.replace(regex, '<span class="suggestion-match">$1</span>')
+            : safeMatch;
+
+          div.innerHTML = `${icon}<span class="suggestion-text">${highlightedText}</span>`;
+          div.addEventListener('click', () => {
+            searchInput.value = match;
+            hideSuggestions();
+            searchInput.focus();
+          });
+          fragment.appendChild(div);
+        });
+
+        suggestionsBox.appendChild(fragment);
+        suggestionsBox.classList.add('active');
+        searchBox.classList.add('has-suggestions');
       }
 
       const searchIcon = searchBox.querySelector('svg');
       if (searchIcon) {
         searchIcon.style.cursor = 'pointer';
-        
+
         searchIcon.addEventListener('click', (e) => {
-          e.stopPropagation(); // Biar gak bentrok
+          e.stopPropagation();
           const q = searchInput.value.trim();
-          if (!q) return; 
-          
+          if (!q) return;
+
           if (inputId === 'nav-search') {
             const targetUrl = window.location.pathname.includes('/citation') ? '/citation' : '/search';
             window.location.href = targetUrl + '?q=' + encodeURIComponent(q);
@@ -82,87 +234,61 @@ document.addEventListener('DOMContentLoaded', () => {
           }
         });
       }
-      // Mendeteksi setiap kali user mengetik sesuatu di kolom input
-      let _debounceTimer;
+
+      let requestId = 0;
+      let abortController = null;
+
       searchInput.addEventListener('input', function () {
-        
-        // Mengambil teks yang diketik, diubah ke huruf kecil semua, dan dihapus spasi lebihnya
-        const query = this.value.toLowerCase().trim();
-        
-        // Mengosongkan isi dropdown dari pencarian sebelumnya
-        suggestionsBox.innerHTML = '';
+        const query = this.value.trim();
+        const normalizedQuery = normalizeText(query);
+        requestId += 1;
 
-        // Jika user mengetik minimal 2 huruf
-        if (query.length > 1) {
-          clearTimeout(_debounceTimer);
-          _debounceTimer = setTimeout(async () => {
-          // Fetch suggestions from API
-          const matches = await fetchSuggestions(query);
+        if (abortController) {
+          abortController.abort();
+          abortController = null;
+        }
 
-          // Jika ada kata yang cocok (ketemu)
-          if (matches.length > 0) {
-            
-            // Lakukan perulangan untuk setiap kata yang cocok
-            matches.forEach(match => {
-              
-              // Membuat baris (item) baru di dalam dropdown
-              const div = document.createElement('div');
-              div.className = 'suggestion-item';
-              
-              // Ikon kaca pembesar untuk di sebelah kiri teks
-              const icon = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>`;
-              const safeMatch = escapeHtml(match);
-              const regex = new RegExp(`(${escapeRegExp(query)})`, 'gi');
-              const highlightedText = safeMatch.replace(regex, '<span class="suggestion-match">$1</span>');
+        if (normalizedQuery.length < AUTOCOMPLETE_MIN_CHARS) {
+          hideSuggestions();
+          return;
+        }
 
-              // Memasukkan ikon dan teks yang sudah di-highlight ke dalam baris
-              div.innerHTML = `${icon}<span class="suggestion-text">${highlightedText}</span>`;
-              
-            div.addEventListener('click', () => {
-                // 1. Cukup isikan kata yang dipilih ke dalam kolom input
-                searchInput.value = match;
-                
-                // 2. Tutup kotak dropdown-nya
-                suggestionsBox.classList.remove('active');
-                searchBox.classList.remove('has-suggestions');
-                
-                // 3. Fokuskan kembali kursor ke dalam kotak teks biar user bisa ngetik lagi atau tekan enter
-                searchInput.focus();
-              });
-              suggestionsBox.appendChild(div);
-            });
-            
-            // Memunculkan kotak dropdown jika ada kata yg cocok
-            suggestionsBox.classList.add('active');
-            searchBox.classList.add('has-suggestions'); // Mengubah bentuk kotak search agar menyatu
-          } else {
-            // Jika kata tidak ditemukan, sembunyikan dropdown
-            suggestionsBox.classList.remove('active');
-            searchBox.classList.remove('has-suggestions');
-          }
-          }, 200);  // end setTimeout for debounce
-        } else {
-          // Jika user menghapus ketikannya sampai kosong, sembunyikan dropdown
-          suggestionsBox.classList.remove('active');
-          searchBox.classList.remove('has-suggestions');
+        const localMatches = getLocalSuggestions(query);
+        if (localMatches.length || _acTitlesReady) {
+          renderSuggestions(localMatches, query);
+          return;
+        }
+
+        const currentRequest = requestId;
+        abortController = new AbortController();
+        fetchSuggestions(query, abortController.signal)
+          .then(matches => {
+            if (currentRequest !== requestId || normalizeText(searchInput.value) !== normalizedQuery) return;
+            renderSuggestions(matches, searchInput.value.trim());
+          })
+          .catch(err => {
+            if (!err || err.name !== 'AbortError') hideSuggestions();
+          });
+      });
+
+      searchInput.addEventListener('focus', function () {
+        const query = this.value.trim();
+        if (normalizeText(query).length >= AUTOCOMPLETE_MIN_CHARS && _acTitlesReady) {
+          renderSuggestions(getLocalSuggestions(query), query);
         }
       });
 
-      // MENGHILANGKAN DROPDOWN JIKA USER KLIK DI LUAR KOTAK PENCARIAN
       document.addEventListener('click', function (e) {
         if (!searchBox.contains(e.target)) {
-          suggestionsBox.classList.remove('active');
-          searchBox.classList.remove('has-suggestions');
+          hideSuggestions();
         }
       });
 
-      // AKSI TOMBOL ENTER KHUSUS UNTUK NAVBAR
       if (inputId === 'nav-search') {
         searchInput.addEventListener('keypress', function(e) {
           if (e.key === 'Enter' && this.value.trim()) {
             e.preventDefault();
             if (window.location.pathname.includes('/citation')) {
-              // Let citation.html handle its own in-place fetch via keydown
               return;
             }
             window.location.href = '/search?q=' + encodeURIComponent(this.value.trim());
@@ -171,9 +297,10 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
 
-    // 2. TAHAP EKSEKUSI (MEMANGGIL FUNGSI)
-    setupAutocomplete('search-input', '.search-box');      
-    setupAutocomplete('nav-search', '.navbar-search');     
+    loadStoredAutocomplete();
+    preloadAutocomplete();
+    setupAutocomplete('search-input', '.search-box');
+    setupAutocomplete('nav-search', '.navbar-search');
   });
   /* ---- MEMBACA URL UNTUK MENGEMBALIKAN TEKS PENCARIAN ---- */
   const params = new URLSearchParams(window.location.search);
