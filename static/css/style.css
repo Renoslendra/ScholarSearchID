@@ -154,7 +154,8 @@ body.light{
 /* All hero content above the canvas */
 .hero > *:not(#hero-bg-canvas):not(.hero-gradient-overlay):not(.hero-mouse-glow){position:relative;z-index:2}
 
-.hero-title{font-size:48px;font-weight:800;letter-spacing:-1.5px;margin-bottom:16px;min-height:60px;display:flex;align-items:center;justify-content:center}
+.hero-title{font-size:48px;font-weight:800;letter-spacing:0;margin-bottom:16px;min-height:60px;display:flex;align-items:center;justify-content:center;width:100%;max-width:100%;line-height:1.12}
+.hero-title .shiny-decrypted{display:block;max-width:100%;white-space:normal;text-wrap:balance;overflow-wrap:anywhere}
 
 /* Typing text — color set dynamically by JS */
 .typing-text{transition:color 0.8s ease, text-shadow 0.8s ease;color:#60a5fa;text-shadow:0 0 30px rgba(96,165,250,0.3), 0 0 60px rgba(96,165,250,0.1)}
@@ -762,7 +763,7 @@ table {
     min-height: 0;
     font-size: clamp(28px, 7.6vw, 34px) !important;
     line-height: 1.12;
-    letter-spacing: -0.4px;
+    letter-spacing: 0;
     margin-bottom: 14px;
     flex-wrap: wrap;
     overflow-wrap: anywhere;
