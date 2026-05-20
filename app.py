@@ -50,6 +50,7 @@ app.config["SESSION_COOKIE_SECURE"] = os.environ.get("FLASK_ENV") == "production
 app.config["SESSION_COOKIE_HTTPONLY"] = True
 app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
 app.config["MAX_CONTENT_LENGTH"] = 5 * 1024 * 1024  # Batas maksimal ukuran file (5MB) agar terhindar dari DoS/Storage full
+app.config["TEMPLATES_AUTO_RELOAD"] = True  # Auto-reload template changes
 
 
 # ── Security Headers (Gabungan, tanpa duplikat) ──────────────
@@ -539,6 +540,31 @@ def api_profile_delete_photo():
     if database.remove_user_photo(session["user_id"]):
         return jsonify({"status": "success"})
     return jsonify({"error": "Failed to remove photo"}), 500
+
+
+@app.post("/api/profile/delete_account")
+def api_profile_delete_account():
+    """Hapus akun secara permanen setelah verifikasi password."""
+    if "user_id" not in session:
+        return jsonify({"error": "Unauthorized"}), 401
+
+    data = request.get_json(silent=True) or {}
+    password = data.get("password", "")
+
+    if not password:
+        return jsonify({"error": "Password harus diisi untuk konfirmasi."}), 400
+
+    # Verifikasi password
+    user = database.get_user_by_id(session["user_id"])
+    if not user or not check_password_hash(user["password"], password):
+        return jsonify({"error": "Password salah. Akun tidak dihapus."}), 403
+
+    # Hapus akun dari database
+    success = database.delete_user(session["user_id"])
+    if success:
+        session.clear()
+        return jsonify({"status": "deleted"})
+    return jsonify({"error": "Gagal menghapus akun."}), 500
 
 
 # ── Library API ───────────────────────────────────────────────

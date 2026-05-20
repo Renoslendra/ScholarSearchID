@@ -1,10 +1,11 @@
 <!doctype html>
 <html lang="en">
+
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Synthesized Answer — ScholarSearch Kesehatan</title>
-  <link rel="stylesheet" href="/static/css/style.css?v=5">
+  <link rel="stylesheet" href="/static/css/style.css?v=3">
   <style>
     /* ===== Dark theme styles for Answer page ===== */
 
@@ -14,7 +15,7 @@
       padding: 40px 32px 60px;
     }
 
-    .answer-container > h1 {
+    .answer-container>h1 {
       font-size: 32px;
       font-weight: 800;
       margin-bottom: 24px;
@@ -29,8 +30,9 @@
       padding: 28px 28px 20px;
       transition: border-color 0.2s ease;
     }
+
     .answer-card:hover {
-      border-color: rgba(37,99,235,0.4);
+      border-color: rgba(37, 99, 235, 0.4);
     }
 
     .answer-query {
@@ -40,6 +42,7 @@
       padding-bottom: 16px;
       border-bottom: 1px solid var(--border);
     }
+
     .answer-query strong {
       color: var(--text-link);
     }
@@ -49,6 +52,7 @@
       line-height: 1.8;
       color: var(--text-sec);
     }
+
     .answer-body p {
       margin-bottom: 4px;
     }
@@ -59,6 +63,7 @@
       font-size: 13px;
       transition: color 0.2s;
     }
+
     .ref-link:hover {
       color: var(--text-link);
       text-decoration: underline;
@@ -80,6 +85,7 @@
       font-size: 13px;
       color: var(--text-muted);
     }
+
     .answer-source svg {
       width: 18px;
       height: 18px;
@@ -91,6 +97,7 @@
       display: flex;
       gap: 8px;
     }
+
     .answer-actions button {
       display: flex;
       align-items: center;
@@ -104,6 +111,7 @@
       cursor: pointer;
       transition: all 0.2s ease;
     }
+
     .answer-actions button:hover {
       background: var(--bg-elevated);
       border-color: var(--accent);
@@ -114,6 +122,7 @@
     .ref-section {
       margin-top: 40px;
     }
+
     .ref-section h2 {
       font-size: 22px;
       font-weight: 700;
@@ -135,9 +144,10 @@
       transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
       cursor: pointer;
     }
+
     .ref-card:hover {
       border-color: var(--accent);
-      box-shadow: 0 0 0 1px var(--accent), 0 8px 24px rgba(37,99,235,0.08);
+      box-shadow: 0 0 0 1px var(--accent), 0 8px 24px rgba(37, 99, 235, 0.08);
       transform: translateY(-2px);
     }
 
@@ -147,7 +157,7 @@
       justify-content: center;
       width: 28px;
       height: 28px;
-      background: rgba(37,99,235,0.12);
+      background: rgba(37, 99, 235, 0.12);
       color: var(--text-link);
       font-size: 12px;
       font-weight: 700;
@@ -178,21 +188,40 @@
     }
 
     /* Scroll reveal */
-    .reveal { opacity: 0; transform: translateY(16px); transition: opacity 0.5s ease, transform 0.5s ease; }
-    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .reveal {
+      opacity: 0;
+      transform: translateY(16px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
 
     /* Pulse dot for source indicator */
     .pulse-dot {
       display: inline-block;
-      width: 8px; height: 8px;
+      width: 8px;
+      height: 8px;
       background: #22c55e;
       border-radius: 50%;
       margin-right: 8px;
       animation: pulse 2s ease infinite;
     }
+
     @keyframes pulse {
-      0%, 100% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.5; transform: scale(0.8); }
+
+      0%,
+      100% {
+        opacity: 1;
+        transform: scale(1);
+      }
+
+      50% {
+        opacity: 0.5;
+        transform: scale(0.8);
+      }
     }
 
     .footer {
@@ -201,16 +230,29 @@
     }
 
     @media (max-width: 768px) {
-      .answer-container { padding: 24px 16px 48px; }
-      .ref-grid { grid-template-columns: 1fr; }
-      .answer-footer { flex-direction: column; gap: 12px; align-items: flex-start; }
+      .answer-container {
+        padding: 24px 16px 48px;
+      }
+
+      .ref-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .answer-footer {
+        flex-direction: column;
+        gap: 12px;
+        align-items: flex-start;
+      }
     }
   </style>
-<link rel="icon" type="image/png" href="/static/img/logoscholarsearch.png">
+  <link rel="icon" type="image/png" href="/static/img/logoscholarsearch.png">
 </head>
+
 <body>
   <nav class="navbar">
-    <a href="/" class="navbar-logo" style="display:flex;align-items:center;gap:8px;"><img src="/static/img/logoscholarsearch.png" alt="Logo" style="height:24px;width:24px;border-radius:6px;box-shadow:0 0 10px rgba(139,92,246,0.3);"> ScholarSearch</a>
+    <a href="/" class="navbar-logo" style="display:flex;align-items:center;gap:8px;"><img
+        src="/static/img/logoscholarsearch.png" alt="Logo"
+        style="height:24px;width:24px;border-radius:6px;box-shadow:0 0 10px rgba(139,92,246,0.3);"> ScholarSearch</a>
     <ul class="navbar-nav">
       <li><a href="/search" data-i18n="nav.search">Search</a></li>
       <li><a href="/citation" class="active" data-i18n="nav.answer">Answer</a></li>
@@ -220,19 +262,27 @@
     <div class="navbar-right">
       <div class="navbar-search">
         <input type="text" id="nav-search" placeholder="Search..." data-i18n-ph="nav.search_placeholder">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8" />
+          <line x1="21" y1="21" x2="16.65" y2="16.65" />
+        </svg>
       </div>
       {% if user %}
-        <div class="user-profile-nav" style="display:flex;align-items:center;cursor:pointer;" onclick="location.href='/profile'">
-          {% if user.profile_photo %}
-          <div class="user-avatar" style="width:32px;height:32px;border-radius:50%;background-image:url('{{ user.profile_photo }}');background-size:cover;background-position:center;"></div>
-          {% else %}
-          <div class="user-avatar" style="width:32px;height:32px;border-radius:50%;background:var(--accent);color:white;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:14px;">{{ user.firstname[0] }}</div>
-          {% endif %}
-          <span style="color:var(--text);margin-left:8px;font-size:14px;font-weight:500;">{{ user.firstname }}</span>
+      <div class="user-profile-nav" style="display:flex;align-items:center;cursor:pointer;"
+        onclick="location.href='/profile'">
+        {% if user.profile_photo %}
+        <div class="user-avatar"
+          style="width:32px;height:32px;border-radius:50%;background-image:url('{{ user.profile_photo }}');background-size:cover;background-position:center;">
         </div>
+        {% else %}
+        <div class="user-avatar"
+          style="width:32px;height:32px;border-radius:50%;background:var(--accent);color:white;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:14px;">
+          {{ user.firstname[0] }}</div>
+        {% endif %}
+        <span style="color:var(--text);margin-left:8px;font-size:14px;font-weight:500;">{{ user.firstname }}</span>
+      </div>
       {% else %}
-        <button class="btn-signin" onclick="location.href='/signin'" data-i18n="nav.signin">Sign In</button>
+      <button class="btn-signin" onclick="location.href='/signin'" data-i18n="nav.signin">Sign In</button>
       {% endif %}
     </div>
   </nav>
@@ -249,12 +299,23 @@
         <div class="answer-footer">
           <div class="answer-source">
             <span class="pulse-dot"></span>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 2L2 7l10 5 10-5-10-5z" />
+              <path d="M2 17l10 5 10-5" />
+              <path d="M2 12l10 5 10-5" />
+            </svg>
             <span id="answer-source-label">Generating answer…</span>
           </div>
           <div class="answer-actions">
-            <button id="btn-copy" title="Copy answer" aria-label="Copy answer"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button>
-            <button id="btn-save" title="Save answer" aria-label="Save answer"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></button>
+            <button id="btn-copy" title="Copy answer" aria-label="Copy answer"><svg width="18" height="18"
+                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="9" y="9" width="13" height="13" rx="2" />
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+              </svg></button>
+            <button id="btn-save" title="Save answer" aria-label="Save answer"><svg width="18" height="18"
+                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />
+              </svg></button>
           </div>
         </div>
       </div>
@@ -262,17 +323,34 @@
 
     <!-- Loading state -->
     <div id="answer-loading" style="display:none;text-align:center;padding:60px 0;">
-      <div style="width:40px;height:40px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 16px;"></div>
-      <p style="color:var(--text-muted);font-size:15px;" data-i18n="answer.loading">AI sedang menganalisis paper dan menyusun jawaban…</p>
-      <p style="color:var(--text-muted);font-size:13px;margin-top:4px;" data-i18n="answer.loading_time">Ini bisa memakan waktu 15-30 detik</p>
+      <div
+        style="width:40px;height:40px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 16px;">
+      </div>
+      <p style="color:var(--text-muted);font-size:15px;" data-i18n="answer.loading">AI sedang menganalisis paper dan
+        menyusun jawaban…</p>
+      <p style="color:var(--text-muted);font-size:13px;margin-top:4px;" data-i18n="answer.loading_time">Ini bisa memakan
+        waktu 15-30 detik</p>
     </div>
-    <style>@keyframes spin { to { transform: rotate(360deg); } }</style>
+    <style>
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+    </style>
 
     <!-- Empty state -->
     <div id="answer-empty" style="text-align:center;padding:80px 0;">
-      <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="1.5" style="margin-bottom:16px;opacity:0.5;"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
-      <p style="color:var(--text-sec);font-size:17px;font-weight:600;margin-bottom:8px;" data-i18n="answer.empty_title">Tanyakan pertanyaan riset Anda</p>
-      <p style="color:var(--text-muted);font-size:14px;" data-i18n="answer.empty_desc">AI akan mencari paper relevan dan menyusun jawaban dengan sitasi inline</p>
+      <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="1.5"
+        style="margin-bottom:16px;opacity:0.5;">
+        <path d="M12 2L2 7l10 5 10-5-10-5z" />
+        <path d="M2 17l10 5 10-5" />
+        <path d="M2 12l10 5 10-5" />
+      </svg>
+      <p style="color:var(--text-sec);font-size:17px;font-weight:600;margin-bottom:8px;" data-i18n="answer.empty_title">
+        Tanyakan pertanyaan riset Anda</p>
+      <p style="color:var(--text-muted);font-size:14px;" data-i18n="answer.empty_desc">AI akan mencari paper relevan dan
+        menyusun jawaban dengan sitasi inline</p>
     </div>
 
     <!-- Referenced Literature (populated dynamically) -->
@@ -286,11 +364,16 @@
 
   <footer class="footer">
     <div class="footer-inner">
-      <div class="footer-brand"><h4>ScholarSearch Kesehatan</h4><p>&copy; 2026 ScholarSearch Kesehatan. Temu Kembali Informasi.</p></div>
+      <div class="footer-brand">
+        <h4>ScholarSearch Kesehatan</h4>
+        <p>&copy; 2026 ScholarSearch Kesehatan. Temu Kembali Informasi.</p>
+      </div>
       <div class="footer-links">
-        <a href="https://github.com/Renoslendra/ScholarSearchID.git" target="_blank" style="display:flex;align-items:center;gap:4px;">
+        <a href="https://github.com/Renoslendra/ScholarSearchID.git" target="_blank"
+          style="display:flex;align-items:center;gap:4px;">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1.1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.8-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2 1-.3 2-.4 3-.4s2 .1 3 .4c2.3-1.5 3.3-1.2 3.3-1.2.6 1.7.2 2.9.1 3.2.7.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3Z"/>
+            <path
+              d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1.1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.8-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2 1-.3 2-.4 3-.4s2 .1 3 .4c2.3-1.5 3.3-1.2 3.3-1.2.6 1.7.2 2.9.1 3.2.7.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3Z" />
           </svg>
           GitHub
         </a>
@@ -301,7 +384,7 @@
   <script src="/static/js/app.js"></script>
   <script src="/static/js/search.js?v=3"></script>
   <script>
-    (function(){
+    (function () {
       const navSearch = document.getElementById('nav-search');
       const cardWrapper = document.getElementById('answer-card-wrapper');
       const loading = document.getElementById('answer-loading');
@@ -326,9 +409,9 @@
       if (initQ) {
         navSearch.value = initQ;
         if (cachedQ === initQ && cachedDataStr) {
-           renderAnswerData(JSON.parse(cachedDataStr), initQ);
+          renderAnswerData(JSON.parse(cachedDataStr), initQ);
         } else {
-           fetchAnswer(initQ);
+          fetchAnswer(initQ);
         }
       } else if (cachedQ && cachedDataStr) {
         navSearch.value = cachedQ;
@@ -337,17 +420,17 @@
       }
 
       // Listen for Enter key on the navbar search
-      navSearch.addEventListener('keydown', function(e) {
+      navSearch.addEventListener('keydown', function (e) {
         if (e.key === 'Enter') {
           e.preventDefault();
           const q = navSearch.value.trim();
           if (!q) return;
           history.pushState(null, '', '/citation?q=' + encodeURIComponent(q));
-          
-           if (sessionStorage.getItem(CACHE_Q_KEY) === q && sessionStorage.getItem(CACHE_DATA_KEY) && sessionStorage.getItem('answer_lang') === getLang()) {
-             renderAnswerData(JSON.parse(sessionStorage.getItem(CACHE_DATA_KEY)), q);
-           } else {
-             fetchAnswer(q);
+
+          if (sessionStorage.getItem(CACHE_Q_KEY) === q && sessionStorage.getItem(CACHE_DATA_KEY) && sessionStorage.getItem('answer_lang') === getLang()) {
+            renderAnswerData(JSON.parse(sessionStorage.getItem(CACHE_DATA_KEY)), q);
+          } else {
+            fetchAnswer(q);
           }
         }
       });
@@ -366,7 +449,7 @@
             sessionStorage.setItem(CACHE_Q_KEY, q);
             sessionStorage.setItem(CACHE_DATA_KEY, JSON.stringify(data));
             sessionStorage.setItem('answer_lang', getLang());
-            
+
             renderAnswerData(data, q);
           })
           .catch(err => {
@@ -390,138 +473,138 @@
         }
 
         // Populate answer card
-            queryEl.textContent = 'Query: ' + data.question;
+        queryEl.textContent = 'Query: ' + data.question;
 
-            // Format the answer: convert [1], [2] etc to clickable ref links
-            let html = data.answer
-              .replace(/\[(\d+)\]/g, '<a class="ref-link" href="#ref$1">[$1]</a>')
-              .replace(/\n\n/g, '</p><br><p>')
-              .replace(/\n/g, '</p><p>');
-            bodyEl.innerHTML = '<p>' + html + '</p>';
+        // Format the answer: convert [1], [2] etc to clickable ref links
+        let html = data.answer
+          .replace(/\[(\d+)\]/g, '<a class="ref-link" href="#ref$1">[$1]</a>')
+          .replace(/\n\n/g, '</p><br><p>')
+          .replace(/\n/g, '</p><p>');
+        bodyEl.innerHTML = '<p>' + html + '</p>';
 
-            // Source label
-            const src = data.source || 'extractive';
-            const srcCount = (data.citations || []).length;
-            if (src === 'llm') {
-              sourceLabel.textContent = t('answer.source_ai') + ' ' + srcCount + ' ' + t('answer.papers_suffix');
+        // Source label
+        const src = data.source || 'extractive';
+        const srcCount = (data.citations || []).length;
+        if (src === 'llm') {
+          sourceLabel.textContent = t('answer.source_ai') + ' ' + srcCount + ' ' + t('answer.papers_suffix');
+        } else {
+          sourceLabel.textContent = t('answer.source_ext') + ' ' + srcCount + ' ' + t('answer.papers_suffix');
+        }
+
+        cardWrapper.style.display = 'block';
+        currentAnswerData = data; // Store for save button
+        currentAnswerData._question = data.question || q;
+
+        // Check if already saved
+        fetch('/api/answer/is-saved?q=' + encodeURIComponent(data.question || q))
+          .then(r => r.json())
+          .then(res => {
+            const btn = document.getElementById('btn-save');
+            if (res.saved) {
+              btn.setAttribute('data-saved', 'true');
+              btn.style.borderColor = '#2563eb';
+              btn.style.color = '#2563eb';
+              btn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>';
             } else {
-              sourceLabel.textContent = t('answer.source_ext') + ' ' + srcCount + ' ' + t('answer.papers_suffix');
+              btn.setAttribute('data-saved', 'false');
+              btn.style.borderColor = '';
+              btn.style.color = '';
+              btn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>';
             }
+          }).catch(() => { });
 
-            cardWrapper.style.display = 'block';
-            currentAnswerData = data; // Store for save button
-            currentAnswerData._question = data.question || q;
+        // Animate in
+        const card = cardWrapper.querySelector('.answer-card');
+        card.classList.add('reveal');
+        requestAnimationFrame(() => card.classList.add('visible'));
 
-            // Check if already saved
-            fetch('/api/answer/is-saved?q=' + encodeURIComponent(data.question || q))
-              .then(r => r.json())
-              .then(res => {
-                const btn = document.getElementById('btn-save');
-                if (res.saved) {
-                  btn.setAttribute('data-saved', 'true');
-                  btn.style.borderColor = '#2563eb';
-                  btn.style.color = '#2563eb';
-                  btn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>';
-                } else {
-                  btn.setAttribute('data-saved', 'false');
-                  btn.style.borderColor = '';
-                  btn.style.color = '';
-                  btn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>';
-                }
-              }).catch(() => {});
+        // Populate citations
+        if (data.citations && data.citations.length > 0) {
+          refGrid.innerHTML = '';
+          fetch('/api/library/ids').then(r => r.json()).then(savedData => {
+            const savedIds = new Set(savedData.ids || []);
+            data.citations.forEach(c => {
+              const isSaved = savedIds.has(c.id);
+              const saveColor = isSaved ? '#2563eb' : 'var(--text-muted)';
+              const saveFill = isSaved ? 'currentColor' : 'none';
 
-            // Animate in
-            const card = cardWrapper.querySelector('.answer-card');
-            card.classList.add('reveal');
-            requestAnimationFrame(() => card.classList.add('visible'));
+              const el = document.createElement('div');
+              el.className = 'ref-card reveal';
+              el.id = 'ref' + c.ref_num;
+              el.innerHTML =
+                '<div class="ref-num">[' + c.ref_num + ']</div>' +
+                '<h4>' + (c.title || '') + '</h4>' +
+                '<p class="ref-author">' + (c.authors || '') + '</p>' +
+                '<div style="display:flex; justify-content:space-between; align-items:center;">' +
+                '<p class="ref-journal" style="margin:0;">' + (c.journal || '').toUpperCase() + ' &bull; ' + (c.year || '') + '</p>' +
+                '<div style="display:flex;gap:8px;align-items:center;">' +
+                (c.url ? '<a href="' + c.url + '" target="_blank" rel="noopener" title="Lihat di Garuda" style="color:var(--text-muted);transition:color .2s;" onmouseover="this.style.color=\'#2563eb\'" onmouseout="this.style.color=\'var(--text-muted)\'">' +
+                  '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>' +
+                  '</a>' : '') +
+                '<button class="save-cit-btn" aria-label="' + (isSaved ? 'Saved citation' : 'Save citation') + '" data-id="' + c.id + '" data-saved="' + isSaved + '" style="background:none;border:none;cursor:pointer;color:' + saveColor + ';padding:4px;">' +
+                '<svg width="16" height="16" viewBox="0 0 24 24" fill="' + saveFill + '" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>' +
+                '</button></div></div>';
+              refGrid.appendChild(el);
+              requestAnimationFrame(() => {
+                el.style.transitionDelay = (c.ref_num * 0.08) + 's';
+                el.classList.add('visible');
+              });
+            });
 
-              // Populate citations
-            if (data.citations && data.citations.length > 0) {
-              refGrid.innerHTML = '';
-              fetch('/api/library/ids').then(r => r.json()).then(savedData => {
-                const savedIds = new Set(savedData.ids || []);
-                data.citations.forEach(c => {
-                  const isSaved = savedIds.has(c.id);
-                  const saveColor = isSaved ? '#2563eb' : 'var(--text-muted)';
-                  const saveFill = isSaved ? 'currentColor' : 'none';
-                  
-                  const el = document.createElement('div');
-                  el.className = 'ref-card reveal';
-                  el.id = 'ref' + c.ref_num;
-                  el.innerHTML =
-                    '<div class="ref-num">[' + c.ref_num + ']</div>' +
-                    '<h4>' + (c.title || '') + '</h4>' +
-                    '<p class="ref-author">' + (c.authors || '') + '</p>' +
-                    '<div style="display:flex; justify-content:space-between; align-items:center;">' +
-                    '<p class="ref-journal" style="margin:0;">' + (c.journal || '').toUpperCase() + ' &bull; ' + (c.year || '') + '</p>' +
-                    '<div style="display:flex;gap:8px;align-items:center;">' +
-                    (c.url ? '<a href="' + c.url + '" target="_blank" rel="noopener" title="Lihat di Garuda" style="color:var(--text-muted);transition:color .2s;" onmouseover="this.style.color=\'#2563eb\'" onmouseout="this.style.color=\'var(--text-muted)\'">' +
-                    '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>' +
-                    '</a>' : '') +
-                    '<button class="save-cit-btn" aria-label="' + (isSaved ? 'Saved citation' : 'Save citation') + '" data-id="' + c.id + '" data-saved="' + isSaved + '" style="background:none;border:none;cursor:pointer;color:'+saveColor+';padding:4px;">' +
-                    '<svg width="16" height="16" viewBox="0 0 24 24" fill="'+saveFill+'" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>' +
-                    '</button></div></div>';
-                  refGrid.appendChild(el);
-                  requestAnimationFrame(() => {
-                    el.style.transitionDelay = (c.ref_num * 0.08) + 's';
-                    el.classList.add('visible');
-                  });
-                });
-                
-                // Attach save events
-                document.querySelectorAll('.save-cit-btn').forEach(btn => {
-                   btn.addEventListener('click', function() {
-                      const pid = parseInt(this.getAttribute('data-id'));
-                      const saved = this.getAttribute('data-saved') === 'true';
-                      const endpoint = saved ? '/api/library/unsave' : '/api/library/save';
-                      
-                      fetch(endpoint, {
-                         method: 'POST',
-                         headers: {'Content-Type': 'application/json'},
-                         body: JSON.stringify({paper_id: pid})
-                      }).then(res => {
-                         if (res.status === 401) { window.location.href = '/signin'; return; }
-                         return res.json();
-                      }).then(resData => {
-                         if (resData && (resData.status === 'saved' || resData.status === 'unsaved')) {
-                            const newSaved = !saved;
-                            this.setAttribute('data-saved', newSaved);
-                            this.setAttribute('aria-label', newSaved ? 'Saved citation' : 'Save citation');
-                            this.style.color = newSaved ? '#2563eb' : 'var(--text-muted)';
-                            this.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="'+(newSaved?'currentColor':'none')+'" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>';
-                         }
-                      });
-                   });
-                });
-              }).catch(() => {
-                // Fallback rendering
-                data.citations.forEach(c => {
-                  const el = document.createElement('div');
-                  el.className = 'ref-card reveal';
-                  el.id = 'ref' + c.ref_num;
-                  el.innerHTML =
-                    '<div class="ref-num">[' + c.ref_num + ']</div>' +
-                    '<h4>' + (c.title || '') + '</h4>' +
-                    '<p class="ref-author">' + (c.authors || '') + '</p>' +
-                    '<div style="display:flex; justify-content:space-between; align-items:center;">' +
-                    '<p class="ref-journal" style="margin:0;">' + (c.journal || '').toUpperCase() + ' &bull; ' + (c.year || '') + '</p>' +
-                    (c.url ? '<a href="' + c.url + '" target="_blank" rel="noopener" title="Lihat di Garuda" style="color:var(--text-muted);transition:color .2s;" onmouseover="this.style.color=\'#2563eb\'" onmouseout="this.style.color=\'var(--text-muted)\'">' +
-                    '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>' +
-                    '</a>' : '') +
-                    '</div>';
-                  refGrid.appendChild(el);
-                  requestAnimationFrame(() => {
-                    el.style.transitionDelay = (c.ref_num * 0.08) + 's';
-                    el.classList.add('visible');
-                  });
+            // Attach save events
+            document.querySelectorAll('.save-cit-btn').forEach(btn => {
+              btn.addEventListener('click', function () {
+                const pid = parseInt(this.getAttribute('data-id'));
+                const saved = this.getAttribute('data-saved') === 'true';
+                const endpoint = saved ? '/api/library/unsave' : '/api/library/save';
+
+                fetch(endpoint, {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ paper_id: pid })
+                }).then(res => {
+                  if (res.status === 401) { window.location.href = '/signin'; return; }
+                  return res.json();
+                }).then(resData => {
+                  if (resData && (resData.status === 'saved' || resData.status === 'unsaved')) {
+                    const newSaved = !saved;
+                    this.setAttribute('data-saved', newSaved);
+                    this.setAttribute('aria-label', newSaved ? 'Saved citation' : 'Save citation');
+                    this.style.color = newSaved ? '#2563eb' : 'var(--text-muted)';
+                    this.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="' + (newSaved ? 'currentColor' : 'none') + '" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>';
+                  }
                 });
               });
-              refSection.style.display = 'block';
-            }
+            });
+          }).catch(() => {
+            // Fallback rendering
+            data.citations.forEach(c => {
+              const el = document.createElement('div');
+              el.className = 'ref-card reveal';
+              el.id = 'ref' + c.ref_num;
+              el.innerHTML =
+                '<div class="ref-num">[' + c.ref_num + ']</div>' +
+                '<h4>' + (c.title || '') + '</h4>' +
+                '<p class="ref-author">' + (c.authors || '') + '</p>' +
+                '<div style="display:flex; justify-content:space-between; align-items:center;">' +
+                '<p class="ref-journal" style="margin:0;">' + (c.journal || '').toUpperCase() + ' &bull; ' + (c.year || '') + '</p>' +
+                (c.url ? '<a href="' + c.url + '" target="_blank" rel="noopener" title="Lihat di Garuda" style="color:var(--text-muted);transition:color .2s;" onmouseover="this.style.color=\'#2563eb\'" onmouseout="this.style.color=\'var(--text-muted)\'">' +
+                  '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>' +
+                  '</a>' : '') +
+                '</div>';
+              refGrid.appendChild(el);
+              requestAnimationFrame(() => {
+                el.style.transitionDelay = (c.ref_num * 0.08) + 's';
+                el.classList.add('visible');
+              });
+            });
+          });
+          refSection.style.display = 'block';
+        }
       }
 
       // Copy button
-      document.getElementById('btn-copy').addEventListener('click', function() {
+      document.getElementById('btn-copy').addEventListener('click', function () {
         const text = bodyEl.innerText;
         navigator.clipboard.writeText(text).then(() => {
           this.style.borderColor = '#22c55e';
@@ -529,9 +612,9 @@
           setTimeout(() => { this.style.borderColor = ''; this.style.color = ''; }, 1500);
         });
       });
-      
+
       // Save Answer button — calls API
-      document.getElementById('btn-save').addEventListener('click', function() {
+      document.getElementById('btn-save').addEventListener('click', function () {
         if (!currentAnswerData) return;
         const isSaved = this.getAttribute('data-saved') === 'true';
         const btn = this;
@@ -564,7 +647,7 @@
                 btn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>';
               }
             })
-            .catch(() => {});
+            .catch(() => { });
           return;
         }
 
@@ -578,24 +661,22 @@
             citations: currentAnswerData.citations || []
           })
         })
-        .then(res => {
-          if (res.status === 401) { window.location.href = '/signin'; return; }
-          return res.json();
-        })
-        .then(resData => {
-          if (resData && resData.status === 'saved') {
-            btn.setAttribute('data-saved', 'true');
-            btn.style.borderColor = '#2563eb';
-            btn.style.color = '#2563eb';
-            btn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>';
-          }
-        })
-        .catch(() => {});
+          .then(res => {
+            if (res.status === 401) { window.location.href = '/signin'; return; }
+            return res.json();
+          })
+          .then(resData => {
+            if (resData && resData.status === 'saved') {
+              btn.setAttribute('data-saved', 'true');
+              btn.style.borderColor = '#2563eb';
+              btn.style.color = '#2563eb';
+              btn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>';
+            }
+          })
+          .catch(() => { });
       });
     })();
   </script>
 </body>
+
 </html>
-
-
-

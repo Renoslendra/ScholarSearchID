@@ -357,6 +357,19 @@ def remove_user_photo(user_id: int, db_path: str | None = None) -> bool:
             return False
 
 
+def delete_user(user_id: int, db_path: str | None = None) -> bool:
+    """Hapus akun user secara permanen beserta semua data terkait."""
+    with _connect(db_path) as conn:
+        try:
+            # Hapus paper tersimpan milik user
+            conn.execute("DELETE FROM saved_papers WHERE user_id = ?", (user_id,))
+            # Hapus akun user
+            conn.execute("DELETE FROM users WHERE id = ?", (user_id,))
+            return True
+        except Exception:
+            return False
+
+
 # ── library (saved papers) ───────────────────────────────────
 
 def save_paper(user_id: int, paper_id: int, db_path: str | None = None) -> bool:

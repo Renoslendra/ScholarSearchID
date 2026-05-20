@@ -5,7 +5,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Library — ScholarSearch Kesehatan</title>
-  <link rel="stylesheet" href="/static/css/style.css?v=5">
+  <link rel="stylesheet" href="/static/css/style.css?v=3">
   <style>
     /* Scroll reveal */
     .reveal {
@@ -179,12 +179,14 @@
       align-items: flex-start;
       justify-content: space-between;
       background: var(--bg-surface);
-      border: 2px solid #cbd5e1; /* <-- Garis card dipertebal (2px) */
+      border: 2px solid #cbd5e1;
+      /* <-- Garis card dipertebal (2px) */
       border-left: 3px solid transparent;
       border-radius: var(--radius-lg);
       padding: 18px 22px;
       margin-bottom: 12px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04); /* Memberi sedikit dimensi */
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+      /* Memberi sedikit dimensi */
       transition: all 0.25s ease;
     }
 
@@ -296,22 +298,74 @@
       border-radius: var(--radius-lg);
       padding: 18px 22px;
       margin-bottom: 12px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
       transition: all 0.25s ease;
       cursor: pointer;
     }
+
     .saved-answer-card:hover {
-      box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
       transform: translateX(3px);
     }
-    .sa-header { display:flex; justify-content:space-between; align-items:flex-start; gap:12px; }
-    .sa-question { font-size:15px; font-weight:700; color:var(--text); flex:1; }
-    .sa-meta { display:flex; align-items:center; gap:10px; margin-top:8px; font-size:12px; color:var(--text-muted); }
-    .sa-badge { background:var(--accent); color:#fff; padding:2px 8px; border-radius:6px; font-size:11px; font-weight:600; }
-    .sa-body { display:none; margin-top:14px; font-size:14px; color:var(--text-sec); line-height:1.7; border-top:1px solid var(--border); padding-top:14px; }
-    .sa-body.open { display:block; }
-    .sa-delete { background:none; border:none; color:var(--text-muted); cursor:pointer; padding:4px; transition:color .2s; }
-    .sa-delete:hover { color:#ef4444; }
+
+    .sa-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    .sa-question {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text);
+      flex: 1;
+    }
+
+    .sa-meta {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 8px;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .sa-badge {
+      background: var(--accent);
+      color: #fff;
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .sa-body {
+      display: none;
+      margin-top: 14px;
+      font-size: 14px;
+      color: var(--text-sec);
+      line-height: 1.7;
+      border-top: 1px solid var(--border);
+      padding-top: 14px;
+    }
+
+    .sa-body.open {
+      display: block;
+    }
+
+    .sa-delete {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 4px;
+      transition: color .2s;
+    }
+
+    .sa-delete:hover {
+      color: #ef4444;
+    }
 
     @media (max-width: 768px) {
       .collections-grid {
@@ -334,8 +388,9 @@
 
 <body class="light">
   <nav class="navbar">
-    <a href="/" class="navbar-logo" style="display:flex;align-items:center;gap:8px;"><img src="/static/img/logoscholarsearch.png"
-        alt="Logo" style="height:24px;width:24px;border-radius:6px;box-shadow:0 0 10px rgba(139,92,246,0.3);">
+    <a href="/" class="navbar-logo" style="display:flex;align-items:center;gap:8px;"><img
+        src="/static/img/logoscholarsearch.png" alt="Logo"
+        style="height:24px;width:24px;border-radius:6px;box-shadow:0 0 10px rgba(139,92,246,0.3);">
       ScholarSearch</a>
     <ul class="navbar-nav">
       <li><a href="/search" data-i18n="nav.search">Search</a></li>
@@ -378,13 +433,15 @@
 
   <section class="saved-section" id="saved-answers-section" style="padding-bottom:0;">
     <div class="section-header">
-      <h2><span data-i18n="library.saved_answers">Jawaban AI Tersimpan</span> <span id="sa-count" style="color:var(--text-muted);font-size:15px;font-weight:400;margin-left:8px;">(0)</span></h2>
+      <h2><span data-i18n="library.saved_answers">Jawaban AI Tersimpan</span> <span id="sa-count"
+          style="color:var(--text-muted);font-size:15px;font-weight:400;margin-left:8px;">(0)</span></h2>
     </div>
     <div id="sa-loading" style="text-align:center;padding:30px 0;">
       <p style="color:var(--text-muted);" data-i18n="library.loading_answers">Memuat jawaban tersimpan...</p>
     </div>
     <div id="sa-empty" style="display:none;text-align:center;padding:30px 0;">
-      <p style="color:var(--text-muted);font-size:14px;" data-i18n="library.no_answers">Belum ada jawaban AI yang disimpan. Simpan jawaban dari halaman Answer.</p>
+      <p style="color:var(--text-muted);font-size:14px;" data-i18n="library.no_answers">Belum ada jawaban AI yang
+        disimpan. Simpan jawaban dari halaman Answer.</p>
     </div>
     <div id="sa-list"></div>
   </section>
@@ -393,11 +450,12 @@
     <div class="section-header">
       <h2><span data-i18n="library.saved_papers">Saved Papers</span> <span id="saved-count"
           style="color:var(--text-muted);font-size:15px;font-weight:400;margin-left:8px;">(0)</span></h2>
-      <select id="library-filter" aria-label="Urutkan library" onchange="applyFilter()" style="background:var(--bg-surface-2);border:1px solid var(--border);border-radius:var(--radius-md);color:var(--text-sec);font-size:13px;padding:8px 14px;cursor:pointer;outline:none;">
-          <option value="newest" data-i18n="library.filter_newest">Terbaru Disimpan</option>
-          <option value="year_desc" data-i18n="library.filter_year_desc">Tahun Terbit (Terbaru)</option>
-          <option value="year_asc" data-i18n="library.filter_year_asc">Tahun Terbit (Terlama)</option>
-          <option value="title_asc" data-i18n="library.filter_title">Judul (A-Z)</option>
+      <select id="library-filter" aria-label="Urutkan library" onchange="applyFilter()"
+        style="background:var(--bg-surface-2);border:1px solid var(--border);border-radius:var(--radius-md);color:var(--text-sec);font-size:13px;padding:8px 14px;cursor:pointer;outline:none;">
+        <option value="newest" data-i18n="library.filter_newest">Terbaru Disimpan</option>
+        <option value="year_desc" data-i18n="library.filter_year_desc">Tahun Terbit (Terbaru)</option>
+        <option value="year_asc" data-i18n="library.filter_year_asc">Tahun Terbit (Terlama)</option>
+        <option value="title_asc" data-i18n="library.filter_title">Judul (A-Z)</option>
       </select>
     </div>
 
@@ -410,9 +468,11 @@
         style="margin-bottom:16px;opacity:0.3;">
         <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />
       </svg>
-      <p style="color:var(--text-sec);font-size:17px;font-weight:600;margin-bottom:8px;" data-i18n="library.empty">Belum ada paper yang disimpan
+      <p style="color:var(--text-sec);font-size:17px;font-weight:600;margin-bottom:8px;" data-i18n="library.empty">Belum
+        ada paper yang disimpan
       </p>
-      <p style="color:var(--text-muted);font-size:14px;margin-bottom:24px;" data-i18n="library.empty_desc">Jelajahi ScholarSearch Kesehatan dan simpan paper
+      <p style="color:var(--text-muted);font-size:14px;margin-bottom:24px;" data-i18n="library.empty_desc">Jelajahi
+        ScholarSearch Kesehatan dan simpan paper
         favorit Anda.</p>
       <a href="/search" class="btn-new" style="text-decoration:none;" data-i18n="library.search_btn">Cari Paper</a>
     </div>
@@ -512,20 +572,20 @@
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id: id })
       })
-      .then(res => res.json())
-      .then(data => {
-        if (data.status === 'removed') {
-          cardEl.style.opacity = '0';
-          cardEl.style.transform = 'translateX(20px)';
-          setTimeout(() => {
-            cardEl.remove();
-            const countEl = document.getElementById('sa-count');
-            const curr = parseInt(countEl.textContent.replace(/[^0-9]/g, '')) - 1;
-            countEl.textContent = '(' + Math.max(0, curr) + ')';
-            if (curr <= 0) document.getElementById('sa-empty').style.display = 'block';
-          }, 300);
-        }
-      });
+        .then(res => res.json())
+        .then(data => {
+          if (data.status === 'removed') {
+            cardEl.style.opacity = '0';
+            cardEl.style.transform = 'translateX(20px)';
+            setTimeout(() => {
+              cardEl.remove();
+              const countEl = document.getElementById('sa-count');
+              const curr = parseInt(countEl.textContent.replace(/[^0-9]/g, '')) - 1;
+              countEl.textContent = '(' + Math.max(0, curr) + ')';
+              if (curr <= 0) document.getElementById('sa-empty').style.display = 'block';
+            }, 300);
+          }
+        });
     }
 
     function fetchLibrary() {
@@ -545,7 +605,7 @@
 
           allPapers = data.papers; // Save globally
           document.getElementById('saved-count').textContent = `(${data.total})`;
-          
+
           applyFilter(); // Render and apply default filter
         })
         .catch(err => {
@@ -555,40 +615,40 @@
     }
 
     function applyFilter() {
-        const filterVal = document.getElementById('library-filter').value;
-        let sortedPapers = [...allPapers];
+      const filterVal = document.getElementById('library-filter').value;
+      let sortedPapers = [...allPapers];
 
-        if (filterVal === 'year_desc') {
-            sortedPapers.sort((a, b) => parseInt(b.year || 0) - parseInt(a.year || 0));
-        } else if (filterVal === 'year_asc') {
-            sortedPapers.sort((a, b) => parseInt(a.year || 0) - parseInt(b.year || 0));
-        } else if (filterVal === 'title_asc') {
-            sortedPapers.sort((a, b) => (a.title || '').localeCompare(b.title || ''));
-        }
-        // 'newest' uses the original order which is reverse chronological by save date from backend
+      if (filterVal === 'year_desc') {
+        sortedPapers.sort((a, b) => parseInt(b.year || 0) - parseInt(a.year || 0));
+      } else if (filterVal === 'year_asc') {
+        sortedPapers.sort((a, b) => parseInt(a.year || 0) - parseInt(b.year || 0));
+      } else if (filterVal === 'title_asc') {
+        sortedPapers.sort((a, b) => (a.title || '').localeCompare(b.title || ''));
+      }
+      // 'newest' uses the original order which is reverse chronological by save date from backend
 
-        renderPapers(sortedPapers);
+      renderPapers(sortedPapers);
     }
 
     function renderPapers(papers) {
-        const list = document.getElementById('saved-list');
-        list.innerHTML = '';
-        
-        if (papers.length === 0) {
-            document.getElementById('empty-state').style.display = 'block';
-            return;
-        } else {
-            document.getElementById('empty-state').style.display = 'none';
-        }
+      const list = document.getElementById('saved-list');
+      list.innerHTML = '';
 
-        papers.forEach((p, i) => {
-            const authors = Array.isArray(p.authors) ? p.authors.join(', ') : (p.authors || '');
-            const abstract = (p.abstract || '').substring(0, 200) + ((p.abstract || '').length > 200 ? '...' : '');
+      if (papers.length === 0) {
+        document.getElementById('empty-state').style.display = 'block';
+        return;
+      } else {
+        document.getElementById('empty-state').style.display = 'none';
+      }
 
-            const card = document.createElement('div');
-            card.className = 'saved-card reveal';
-            card.style.transitionDelay = (i * 0.05) + 's';
-            card.innerHTML = `
+      papers.forEach((p, i) => {
+        const authors = Array.isArray(p.authors) ? p.authors.join(', ') : (p.authors || '');
+        const abstract = (p.abstract || '').substring(0, 200) + ((p.abstract || '').length > 200 ? '...' : '');
+
+        const card = document.createElement('div');
+        card.className = 'saved-card reveal';
+        card.style.transitionDelay = (i * 0.05) + 's';
+        card.innerHTML = `
               <div class="saved-content">
                 <div class="saved-tags">
                   <span class="tag" style="background:#e0f2fe; color:#0369a1;">${p.journal || 'Journal'}</span>
@@ -613,11 +673,11 @@
                 </a>
               </div>
             `;
-            list.appendChild(card);
+        list.appendChild(card);
 
-            // Trigger animation
-            requestAnimationFrame(() => card.classList.add('visible'));
-        });
+        // Trigger animation
+        requestAnimationFrame(() => card.classList.add('visible'));
+      });
     }
 
     function unsavePaper(paperId, cardElement) {

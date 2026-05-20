@@ -5,7 +5,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Edit Profil — ScholarSearch Kesehatan</title>
-  <link rel="stylesheet" href="/static/css/style.css?v=5">
+  <link rel="stylesheet" href="/static/css/style.css?v=3">
   <link rel="stylesheet" href="/static/css/profile.css">
   <link rel="icon" type="image/png" href="/static/img/logoscholarsearch.png">
 </head>
@@ -23,7 +23,8 @@
     </ul>
     <div class="navbar-right">
       <div class="user-menu" id="user-menu">
-        <button class="user-menu-trigger" id="user-menu-trigger" aria-haspopup="true" aria-expanded="false" aria-controls="user-dropdown">
+        <button class="user-menu-trigger" id="user-menu-trigger" aria-haspopup="true" aria-expanded="false"
+          aria-controls="user-dropdown">
           {% if user.profile_photo %}
           <div class="user-avatar"
             style="background-image:url('{{ user.profile_photo }}');background-size:cover;background-position:center;color:transparent;">
@@ -90,6 +91,24 @@
       {% if user.profile_photo %}
       <button class="btn-danger" id="btn-delete-photo">Hapus Foto Profil</button>
       {% endif %}
+
+      <!-- Delete Account -->
+      <button class="btn-delete-account" id="btn-delete-account" style="
+        width:100%;
+        padding:12px 20px;
+        background:linear-gradient(135deg, #fee2e2, #fecaca);
+        color:#dc2626;
+        border:1.5px solid #fca5a5;
+        border-radius:10px;
+        font-size:14px;
+        font-weight:600;
+        cursor:pointer;
+        transition:all 0.2s ease;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        gap:8px;
+      ">Hapus Akun Saya</button>
 
       <!-- Change Password toggle -->
       <button class="btn-change-pw" id="btn-toggle-password">Change Password</button>
@@ -233,6 +252,65 @@
           }
         } catch (err) {
           alert('Terjadi kesalahan jaringan.');
+        }
+      });
+    }
+
+    // ── Delete Account ──
+    const btnDeleteAccount = document.getElementById('btn-delete-account');
+    if (btnDeleteAccount) {
+      // Hover effect
+      btnDeleteAccount.addEventListener('mouseenter', function() {
+        this.style.background = 'linear-gradient(135deg, #fecaca, #fca5a5)';
+        this.style.borderColor = '#f87171';
+        this.style.transform = 'translateY(-1px)';
+        this.style.boxShadow = '0 4px 12px rgba(239,68,68,0.2)';
+      });
+      btnDeleteAccount.addEventListener('mouseleave', function() {
+        this.style.background = 'linear-gradient(135deg, #fee2e2, #fecaca)';
+        this.style.borderColor = '#fca5a5';
+        this.style.transform = '';
+        this.style.boxShadow = '';
+      });
+
+      btnDeleteAccount.addEventListener('click', async () => {
+        // Konfirmasi pertama
+        if (!confirm('⚠️ PERINGATAN!\n\nAnda akan menghapus akun secara permanen.\nSemua data akan hilang dan TIDAK DAPAT dikembalikan.\n\nLanjutkan?')) return;
+
+        // Konfirmasi kedua: minta password
+        const password = prompt('Untuk konfirmasi, masukkan password Anda:');
+        if (!password) return;
+
+        const btn = btnDeleteAccount;
+        const originalHTML = btn.innerHTML;
+        btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="animation:spin 1s linear infinite"><path d="M21 12a9 9 0 11-6.2-8.6"/></svg> Menghapus...';
+        btn.disabled = true;
+        btn.style.opacity = '0.7';
+
+        try {
+          const res = await fetch('/api/profile/delete_account', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ password })
+          });
+
+          const data = await res.json();
+          if (res.ok) {
+            btn.innerHTML = '✓ Akun dihapus';
+            btn.style.background = '#dc2626';
+            btn.style.color = '#fff';
+            setTimeout(() => { window.location.href = '/'; }, 1500);
+          } else {
+            alert(data.error || 'Gagal menghapus akun.');
+            btn.innerHTML = originalHTML;
+            btn.disabled = false;
+            btn.style.opacity = '';
+          }
+        } catch (err) {
+          alert('Terjadi kesalahan jaringan.');
+          btn.innerHTML = originalHTML;
+          btn.disabled = false;
+          btn.style.opacity = '';
         }
       });
     }

@@ -1,13 +1,16 @@
 <!doctype html>
 <html lang="en">
+
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>IR Lab — ScholarSearch Kesehatan</title>
-  <link rel="stylesheet" href="/static/css/style.css?v=5">
+  <link rel="stylesheet" href="/static/css/style.css?v=3">
   <style>
     /* ===== Lab page styles ===== */
-    body.light { background: #f0f0f0; }
+    body.light {
+      background: #f0f0f0;
+    }
 
     .lab-container {
       padding: 40px 0;
@@ -19,11 +22,13 @@
       margin: 0 auto;
       padding: 0 32px 32px;
     }
+
     .lab-header h1 {
       font-size: 36px;
       font-weight: 800;
       color: var(--text);
     }
+
     .lab-header p {
       font-size: 14px;
       color: var(--text-sec);
@@ -46,9 +51,11 @@
       padding: 24px;
       transition: border-color 0.3s ease;
     }
+
     .lab-panel:hover {
       border-color: var(--accent);
     }
+
     .lab-panel h3 {
       font-size: 16px;
       font-weight: 700;
@@ -58,6 +65,7 @@
       align-items: center;
       gap: 8px;
     }
+
     .lab-panel h3::before {
       content: '';
       width: 4px;
@@ -69,6 +77,7 @@
     .lab-field {
       margin-bottom: 18px;
     }
+
     .lab-field label {
       display: block;
       font-size: 13px;
@@ -76,6 +85,7 @@
       color: var(--text-sec);
       margin-bottom: 6px;
     }
+
     .lab-input {
       width: 100%;
       padding: 10px 14px;
@@ -87,6 +97,7 @@
       outline: none;
       transition: border-color 0.2s, box-shadow 0.2s;
     }
+
     .lab-input:focus {
       border-color: var(--accent);
       box-shadow: 0 0 0 3px var(--accent-light);
@@ -102,6 +113,7 @@
       outline: none;
       cursor: pointer;
     }
+
     input[type="range"]::-webkit-slider-thumb {
       -webkit-appearance: none;
       width: 18px;
@@ -109,13 +121,15 @@
       border-radius: 50%;
       background: var(--accent);
       border: 3px solid var(--bg-surface);
-      box-shadow: 0 2px 6px rgba(37,99,235,0.3);
+      box-shadow: 0 2px 6px rgba(37, 99, 235, 0.3);
       cursor: pointer;
       transition: transform 0.15s;
     }
+
     input[type="range"]::-webkit-slider-thumb:hover {
       transform: scale(1.15);
     }
+
     .slider-labels {
       display: flex;
       justify-content: space-between;
@@ -131,6 +145,7 @@
       gap: 10px;
       margin-bottom: 20px;
     }
+
     .checkbox-item {
       display: flex;
       align-items: center;
@@ -142,11 +157,16 @@
       border-radius: var(--radius-md);
       transition: all 0.2s;
     }
+
     .checkbox-item:hover {
       border-color: var(--accent);
       background: var(--accent-light);
     }
-    .checkbox-item input { display: none; }
+
+    .checkbox-item input {
+      display: none;
+    }
+
     .checkmark {
       width: 20px;
       height: 20px;
@@ -158,12 +178,24 @@
       flex-shrink: 0;
       transition: all 0.2s;
     }
-    .checkmark svg { width: 14px; height: 14px; opacity: 0; transition: opacity 0.2s; }
-    .checkbox-item input:checked ~ .checkmark {
+
+    .checkmark svg {
+      width: 14px;
+      height: 14px;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+
+    .checkbox-item input:checked~.checkmark {
       background: var(--accent);
       border-color: var(--accent);
     }
-    .checkbox-item input:checked ~ .checkmark svg { opacity: 1; color: #fff; }
+
+    .checkbox-item input:checked~.checkmark svg {
+      opacity: 1;
+      color: #fff;
+    }
+
     .checkbox-label {
       font-size: 14px;
       color: var(--text);
@@ -184,13 +216,22 @@
       position: relative;
       overflow: hidden;
     }
+
     .btn-run:hover {
       background: var(--accent-hover);
       transform: translateY(-1px);
-      box-shadow: 0 6px 20px rgba(37,99,235,0.3);
+      box-shadow: 0 6px 20px rgba(37, 99, 235, 0.3);
     }
-    .btn-run:active { transform: translateY(0); }
-    .btn-run:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+    .btn-run:active {
+      transform: translateY(0);
+    }
+
+    .btn-run:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
 
     /* Evaluation section (dark) */
     .lab-eval-wrap {
@@ -198,12 +239,14 @@
       padding: 48px 0 56px;
       margin-top: 48px;
     }
+
     .lab-eval-inner {
       max-width: 1200px;
       margin: 0 auto;
       padding: 0 32px;
     }
-    .lab-eval-inner > h2 {
+
+    .lab-eval-inner>h2 {
       font-size: 28px;
       font-weight: 800;
       color: #fff;
@@ -216,6 +259,7 @@
       gap: 16px;
       margin-bottom: 28px;
     }
+
     .metric-card {
       background: #141414;
       border: 1px solid #1f1f1f;
@@ -224,10 +268,12 @@
       text-align: center;
       transition: border-color 0.3s, transform 0.3s;
     }
+
     .metric-card:hover {
       border-color: var(--accent);
       transform: translateY(-3px);
     }
+
     .metric-label {
       font-size: 11px;
       font-weight: 600;
@@ -236,6 +282,7 @@
       letter-spacing: 0.8px;
       margin-bottom: 8px;
     }
+
     .metric-value {
       font-size: 28px;
       font-weight: 800;
@@ -355,32 +402,52 @@
     }
 
     /* Scroll reveal */
-    .reveal { opacity: 0; transform: translateY(16px); transition: opacity 0.5s ease, transform 0.5s ease; }
-    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .reveal {
+      opacity: 0;
+      transform: translateY(16px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
 
     @media (max-width: 768px) {
-      .lab-grid { grid-template-columns: 1fr; }
-      .metrics-grid { grid-template-columns: 1fr 1fr; }
+      .lab-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .metrics-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+
       .lab-results-grid {
         grid-template-columns: 1fr;
       }
+
       .lab-result-card {
         height: 320px;
       }
+
       .chart-container {
         min-height: 280px;
         padding: 18px 16px 20px;
       }
+
       .chart-container canvas {
         height: 220px;
       }
     }
   </style>
-<link rel="icon" type="image/png" href="/static/img/logoscholarsearch.png">
+  <link rel="icon" type="image/png" href="/static/img/logoscholarsearch.png">
 </head>
+
 <body class="light">
   <nav class="navbar">
-    <a href="/" class="navbar-logo" style="display:flex;align-items:center;gap:8px;"><img src="/static/img/logoscholarsearch.png" alt="Logo" style="height:24px;width:24px;border-radius:6px;box-shadow:0 0 10px rgba(139,92,246,0.3);"> ScholarSearch</a>
+    <a href="/" class="navbar-logo" style="display:flex;align-items:center;gap:8px;"><img
+        src="/static/img/logoscholarsearch.png" alt="Logo"
+        style="height:24px;width:24px;border-radius:6px;box-shadow:0 0 10px rgba(139,92,246,0.3);"> ScholarSearch</a>
     <ul class="navbar-nav">
       <li><a href="/search" data-i18n="nav.search">Search</a></li>
       <li><a href="/citation" data-i18n="nav.answer">Answer</a></li>
@@ -389,16 +456,21 @@
     </ul>
     <div class="navbar-right">
       {% if user %}
-        <div class="user-profile-nav" style="display:flex;align-items:center;cursor:pointer;" onclick="location.href='/profile'">
-          {% if user.profile_photo %}
-          <div class="user-avatar" style="width:32px;height:32px;border-radius:50%;background-image:url('{{ user.profile_photo }}');background-size:cover;background-position:center;"></div>
-          {% else %}
-          <div class="user-avatar" style="width:32px;height:32px;border-radius:50%;background:var(--accent);color:white;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:14px;">{{ user.firstname[0] }}</div>
-          {% endif %}
-          <span style="color:var(--text);margin-left:8px;font-size:14px;font-weight:500;">{{ user.firstname }}</span>
+      <div class="user-profile-nav" style="display:flex;align-items:center;cursor:pointer;"
+        onclick="location.href='/profile'">
+        {% if user.profile_photo %}
+        <div class="user-avatar"
+          style="width:32px;height:32px;border-radius:50%;background-image:url('{{ user.profile_photo }}');background-size:cover;background-position:center;">
         </div>
+        {% else %}
+        <div class="user-avatar"
+          style="width:32px;height:32px;border-radius:50%;background:var(--accent);color:white;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:14px;">
+          {{ user.firstname[0] }}</div>
+        {% endif %}
+        <span style="color:var(--text);margin-left:8px;font-size:14px;font-weight:500;">{{ user.firstname }}</span>
+      </div>
       {% else %}
-        <button class="btn-signin" onclick="location.href='/signin'" data-i18n="nav.signin">Sign In</button>
+      <button class="btn-signin" onclick="location.href='/signin'" data-i18n="nav.signin">Sign In</button>
       {% endif %}
     </div>
   </nav>
@@ -413,7 +485,8 @@
         <h3 data-i18n="lab.config">Retrieval Configuration</h3>
         <div class="lab-field">
           <label for="lab-query" data-i18n="lab.query_label">Search Query</label>
-          <input type="text" class="lab-input" id="lab-query" placeholder="Ketik query pencarian..." value="sistem informasi">
+          <input type="text" class="lab-input" id="lab-query" placeholder="Ketik query pencarian..."
+            value="sistem informasi">
         </div>
         <div class="lab-field">
           <label for="topk">Top-K Results</label>
@@ -431,11 +504,26 @@
       <div class="lab-panel">
         <h3 data-i18n="lab.model_select">Model Selection</h3>
         <div class="checkbox-group">
-          <label class="checkbox-item"><input type="checkbox" name="model" value="bm25" checked><span class="checkmark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span><span class="checkbox-label">BM25</span></label>
-          <label class="checkbox-item"><input type="checkbox" name="model" value="tfidf" checked><span class="checkmark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span><span class="checkbox-label">TF-IDF</span></label>
-          <label class="checkbox-item"><input type="checkbox" name="model" value="lm"><span class="checkmark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span><span class="checkbox-label">Language Model</span></label>
-          <label class="checkbox-item"><input type="checkbox" name="model" value="semantic"><span class="checkmark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span><span class="checkbox-label">Semantic Search</span></label>
-          <label class="checkbox-item"><input type="checkbox" name="model" value="l2r"><span class="checkmark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span><span class="checkbox-label">Learning to Rank</span></label>
+          <label class="checkbox-item"><input type="checkbox" name="model" value="bm25" checked><span
+              class="checkmark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                <polyline points="20 6 9 17 4 12" />
+              </svg></span><span class="checkbox-label">BM25</span></label>
+          <label class="checkbox-item"><input type="checkbox" name="model" value="tfidf" checked><span
+              class="checkmark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                <polyline points="20 6 9 17 4 12" />
+              </svg></span><span class="checkbox-label">TF-IDF</span></label>
+          <label class="checkbox-item"><input type="checkbox" name="model" value="lm"><span class="checkmark"><svg
+                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                <polyline points="20 6 9 17 4 12" />
+              </svg></span><span class="checkbox-label">Language Model</span></label>
+          <label class="checkbox-item"><input type="checkbox" name="model" value="semantic"><span class="checkmark"><svg
+                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                <polyline points="20 6 9 17 4 12" />
+              </svg></span><span class="checkbox-label">Semantic Search</span></label>
+          <label class="checkbox-item"><input type="checkbox" name="model" value="l2r"><span class="checkmark"><svg
+                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                <polyline points="20 6 9 17 4 12" />
+              </svg></span><span class="checkbox-label">Learning to Rank</span></label>
         </div>
         <button class="btn-run" id="btn-run" data-i18n="lab.run">Run Evaluation</button>
       </div>
@@ -446,14 +534,29 @@
   <div class="lab-eval-wrap">
     <div class="lab-eval-inner">
       <h2 data-i18n="lab.eval_results">Evaluation Results</h2>
-      <div id="lab-status" style="color:var(--text-muted);font-size:14px;margin-bottom:16px;" data-i18n="lab.eval_hint">Klik "Run Evaluation" untuk mulai perbandingan model.</div>
+      <div id="lab-status" style="color:var(--text-muted);font-size:14px;margin-bottom:16px;" data-i18n="lab.eval_hint">
+        Klik "Run Evaluation" untuk mulai perbandingan model.</div>
       <div class="metrics-grid" id="metrics-grid">
-        <div class="metric-card"><div class="metric-label">MAP@10</div><div class="metric-value" id="metric-map">—</div></div>
-        <div class="metric-card"><div class="metric-label">NDCG@10</div><div class="metric-value" id="metric-ndcg">—</div></div>
-        <div class="metric-card"><div class="metric-label">MRR</div><div class="metric-value" id="metric-mrr">—</div></div>
-        <div class="metric-card"><div class="metric-label">P@10</div><div class="metric-value" id="metric-precision">—</div></div>
+        <div class="metric-card">
+          <div class="metric-label">MAP@10</div>
+          <div class="metric-value" id="metric-map">—</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">NDCG@10</div>
+          <div class="metric-value" id="metric-ndcg">—</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">MRR</div>
+          <div class="metric-value" id="metric-mrr">—</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">P@10</div>
+          <div class="metric-value" id="metric-precision">—</div>
+        </div>
       </div>
-      <div class="chart-container"><h4 data-i18n="lab.pr_curve">Precision-Recall Curve</h4><canvas id="pr-chart"></canvas></div>
+      <div class="chart-container">
+        <h4 data-i18n="lab.pr_curve">Precision-Recall Curve</h4><canvas id="pr-chart"></canvas>
+      </div>
 
       <!-- Results comparison area -->
       <div class="lab-results-area" id="lab-results-area" style="display:none;">
@@ -465,11 +568,16 @@
 
   <footer class="footer">
     <div class="footer-inner">
-      <div class="footer-brand"><h4>ScholarSearch Kesehatan</h4><p>&copy; 2026 ScholarSearch Kesehatan. Temu Kembali Informasi.</p></div>
+      <div class="footer-brand">
+        <h4>ScholarSearch Kesehatan</h4>
+        <p>&copy; 2026 ScholarSearch Kesehatan. Temu Kembali Informasi.</p>
+      </div>
       <div class="footer-links">
-        <a href="https://github.com/Renoslendra/ScholarSearchID.git" target="_blank" style="display:flex;align-items:center;gap:4px;">
+        <a href="https://github.com/Renoslendra/ScholarSearchID.git" target="_blank"
+          style="display:flex;align-items:center;gap:4px;">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1.1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.8-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2 1-.3 2-.4 3-.4s2 .1 3 .4c2.3-1.5 3.3-1.2 3.3-1.2.6 1.7.2 2.9.1 3.2.7.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3Z"/>
+            <path
+              d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1.1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.8-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2 1-.3 2-.4 3-.4s2 .1 3 .4c2.3-1.5 3.3-1.2 3.3-1.2.6 1.7.2 2.9.1 3.2.7.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3Z" />
           </svg>
           GitHub
         </a>
@@ -496,4 +604,5 @@
     });
   </script>
 </body>
+
 </html>
