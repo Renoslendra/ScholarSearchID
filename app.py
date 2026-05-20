@@ -12,6 +12,8 @@ import time
 import uuid
 import hashlib
 import json
+import gzip
+from io import BytesIO
 from typing import Any
 from functools import lru_cache
 
@@ -50,7 +52,8 @@ app.config["SESSION_COOKIE_SECURE"] = os.environ.get("FLASK_ENV") == "production
 app.config["SESSION_COOKIE_HTTPONLY"] = True
 app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
 app.config["MAX_CONTENT_LENGTH"] = 5 * 1024 * 1024  # Batas maksimal ukuran file (5MB) agar terhindar dari DoS/Storage full
-app.config["TEMPLATES_AUTO_RELOAD"] = True  # Auto-reload template changes
+_is_production = os.environ.get("FLASK_ENV") == "production" or os.path.exists("/home")
+app.config["TEMPLATES_AUTO_RELOAD"] = not _is_production  # Auto-reload hanya di development
 
 
 # ── Security Headers (Gabungan, tanpa duplikat) ──────────────
@@ -75,7 +78,25 @@ def apply_security_headers(response):
     )
     # Cache static files (CSS, JS, images) agar browser tidak request ulang
     if request.path.startswith("/static/"):
-        response.headers["Cache-Control"] = "public, max-age=3600"  # 1 jam
+        response.headers["Cache-Control"] = "public, max-age=604800"  # 1 minggu (file pakai ?v= cache buster)
+
+    # Gzip compression untuk hemat bandwidth
+    if (
+        "gzip" in request.headers.get("Accept-Encoding", "")
+        and response.content_type
+        and any(ct in response.content_type for ct in ["text/", "application/json", "application/javascript"])
+        and response.content_length
+        and response.content_length > 500
+    ):
+        try:
+            buf = BytesIO()
+            with gzip.GzipFile(fileobj=buf, mode="wb", compresslevel=6) as gz:
+                gz.write(response.get_data())
+            response.set_data(buf.getvalue())
+            response.headers["Content-Encoding"] = "gzip"
+            response.headers["Content-Length"] = len(response.get_data())
+        except Exception:
+            pass  # Fallback ke uncompressed
     return response
 
 
@@ -134,8 +155,8 @@ _autocomplete_cache: dict[str, list[str]] = {}
 
 # ── Server-side Search Cache (mengurangi CPU load saat banyak user) ──
 _search_cache: dict[str, tuple[float, Any]] = {}  # key -> (timestamp, result)
-SEARCH_CACHE_TTL = 300  # 5 menit
-SEARCH_CACHE_MAX = 200  # Maksimal 200 query di cache
+SEARCH_CACHE_TTL = 1800  # 30 menit — shared hosting perlu cache lebih lama
+SEARCH_CACHE_MAX = 500   # Maksimal 500 query di cache
 AUTOCOMPLETE_DEFAULT_LIMIT = 8
 AUTOCOMPLETE_MAX_LIMIT = 12
 AUTOCOMPLETE_PREFIX_MIN = 2
