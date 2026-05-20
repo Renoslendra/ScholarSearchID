@@ -1,10 +1,10 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="en">
 
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Edit Profil â€” ScholarSearch Kesehatan</title>
+  <title>Edit Profil -- ScholarSearch Kesehatan</title>
   <link rel="stylesheet" href="/static/css/style.css?v=6">
   <link rel="stylesheet" href="/static/css/profile.css">
   <link rel="icon" type="image/png" href="/static/img/logoscholarsearch.png">
@@ -117,11 +117,11 @@
       <div class="pw-form" id="pw-form" style="display:none;">
         <div class="pw-field">
           <label for="old-password">Old Password</label>
-          <input type="password" id="old-password" class="pw-input" placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢">
+          <input type="password" id="old-password" class="pw-input" placeholder="••••••••">
         </div>
         <div class="pw-field">
           <label for="new-password">New Password</label>
-          <input type="password" id="new-password" class="pw-input" placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢">
+          <input type="password" id="new-password" class="pw-input" placeholder="••••••••">
         </div>
         <button class="btn-save-pw" id="btn-save-pw">Change Password</button>
       </div>
@@ -256,7 +256,7 @@
       });
     }
 
-    // â”€â”€ Delete Account â”€â”€
+    // â"€â"€ Delete Account â"€â"€
     const btnDeleteAccount = document.getElementById('btn-delete-account');
     if (btnDeleteAccount) {
       // Hover effect
@@ -275,7 +275,7 @@
 
       btnDeleteAccount.addEventListener('click', async () => {
         // Konfirmasi pertama
-        if (!confirm('âš ï¸ PERINGATAN!\n\nAnda akan menghapus akun secara permanen.\nSemua data akan hilang dan TIDAK DAPAT dikembalikan.\n\nLanjutkan?')) return;
+        if (!confirm('âš ï¸ PERINGATAN!\n\nAnda akan menghapus akun secara permanen.\nSemua data akan hilang dan TIDAK DAPAT dikembalikan.\n\nLanjutkan?')) return;
 
         // Konfirmasi kedua: minta password
         const password = prompt('Untuk konfirmasi, masukkan password Anda:');
@@ -296,7 +296,7 @@
 
           const data = await res.json();
           if (res.ok) {
-            btn.innerHTML = 'âœ“ Akun dihapus';
+            btn.innerHTML = 'âœ" Akun dihapus';
             btn.style.background = '#dc2626';
             btn.style.color = '#fff';
             setTimeout(() => { window.location.href = '/'; }, 1500);

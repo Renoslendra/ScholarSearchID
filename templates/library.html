@@ -1,10 +1,10 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="en">
 
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Library â€” ScholarSearch Kesehatan</title>
+  <title>Library -- ScholarSearch Kesehatan</title>
   <link rel="stylesheet" href="/static/css/style.css?v=6">
   <style>
     /* Scroll reveal */
@@ -290,7 +290,7 @@
       transform: scale(1.08);
     }
 
-    /* â”€â”€ Saved AI Answers â”€â”€ */
+    /* â"€â"€ Saved AI Answers â"€â"€ */
     .saved-answer-card {
       background: var(--bg-surface);
       border: 2px solid #cbd5e1;
@@ -510,7 +510,7 @@
       fetchSavedAnswers();
     });
 
-    // â”€â”€ Saved AI Answers â”€â”€
+    // â"€â"€ Saved AI Answers â"€â"€
     function fetchSavedAnswers() {
       fetch('/api/answer/saved')
         .then(res => {
@@ -548,7 +548,7 @@
               <div class="sa-meta">
                 <span class="sa-badge">${a.source === 'llm' ? 'AI' : 'Extractive'}</span>
                 <span>${date}</span>
-                <span>â€¢ ${(a.citations || []).length} referensi</span>
+                <span>&#8226; ${(a.citations || []).length} referensi</span>
               </div>
               <p style="margin-top:8px;font-size:13px;color:var(--text-muted);">${truncated}</p>
             </div>
