@@ -31,8 +31,8 @@ def rank_l2r(
 
     w = weights or {"bm25": 0.4, "tfidf": 0.25, "lm": 0.2, "pagerank": 0.15}
 
-    # Gather scores from each model (use large top_k to get overlap)
-    big_k = min(index.doc_count, 200)
+    # Gather scores from each model (use moderate top_k for speed on shared hosting)
+    big_k = min(index.doc_count, 50)
     bm25_list = rank_bm25(query_tokens, index, top_k=big_k)
     tfidf_list = rank_tfidf(query_tokens, index, top_k=big_k)
     lm_list = rank_language_model(query_tokens, index, top_k=big_k)

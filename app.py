@@ -153,10 +153,11 @@ _autocomplete_entries: list[tuple[str, str]] = []
 _autocomplete_prefix: dict[str, list[str]] = {}
 _autocomplete_cache: dict[str, list[str]] = {}
 
-# ── Server-side Search Cache (mengurangi CPU load saat banyak user) ──
+# -- Server-side Search Cache (mengurangi CPU load saat banyak user) --
 _search_cache: dict[str, tuple[float, Any]] = {}  # key -> (timestamp, result)
-SEARCH_CACHE_TTL = 1800  # 30 menit — shared hosting perlu cache lebih lama
-SEARCH_CACHE_MAX = 500   # Maksimal 500 query di cache
+SEARCH_CACHE_TTL = 600    # 10 menit -- lebih pendek supaya RAM tidak penuh
+SEARCH_CACHE_MAX = 100    # Maksimal 100 query di cache (hemat RAM)
+_last_cache_cleanup = 0.0  # timestamp last cleanup
 AUTOCOMPLETE_DEFAULT_LIMIT = 8
 AUTOCOMPLETE_MAX_LIMIT = 12
 AUTOCOMPLETE_PREFIX_MIN = 2
@@ -181,6 +182,21 @@ def _set_cached_search(cache_key: str, result: Any):
         oldest_key = min(_search_cache, key=lambda k: _search_cache[k][0])
         del _search_cache[oldest_key]
     _search_cache[cache_key] = (time.time(), result)
+
+
+def _cleanup_expired_caches():
+    """Remove expired cache entries to free RAM. Called periodically."""
+    global _last_cache_cleanup
+    now = time.time()
+    if now - _last_cache_cleanup < 300:  # Cleanup max setiap 5 menit
+        return
+    _last_cache_cleanup = now
+    expired = [k for k, (ts, _) in _search_cache.items() if now - ts > SEARCH_CACHE_TTL]
+    for k in expired:
+        del _search_cache[k]
+    # Juga bersihkan autocomplete cache jika terlalu besar
+    if len(_autocomplete_cache) > 200:
+        _autocomplete_cache.clear()
 
 
 def _ensure_papers_loaded() -> list[dict[str, Any]]:
@@ -401,16 +417,27 @@ def register():
 
 @app.get("/health")
 def health_check():
-    """Health check + warm-up: memastikan index sudah di-memory.
+    """Health check + warm-up + cache cleanup.
     Dipanggil oleh UptimeRobot tiap 5 menit agar server tidak pernah idle/mati.
+    Juga membersihkan cache expired untuk mencegah memory leak.
     """
     try:
+        # Bersihkan cache expired setiap health check
+        _cleanup_expired_caches()
+
         idx = _ensure_loaded()
+
+        # Hitung estimasi memory usage
+        cache_entries = len(_search_cache)
+        autocomplete_entries = len(_autocomplete_cache)
+
         return {
             "status": "ok",
             "docs": idx.doc_count,
             "papers": len(_papers),
             "pagerank_nodes": len(_pagerank),
+            "cache_entries": cache_entries,
+            "autocomplete_cached": autocomplete_entries,
         }
     except Exception as e:
         return {"status": "error", "message": str(e)}, 500
