@@ -34,7 +34,7 @@
       glow: 'rgba(96,165,250,',
     },
     {
-      text: 'Jurnal Teknik Informatika',
+      text: 'Jurnal Kesehatan Masyarakat',
       color: '#34d3b3',
       glow: 'rgba(52,211,153,',
     },

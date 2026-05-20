@@ -17,10 +17,10 @@ const I18N = {
     'nav.search_placeholder': 'Cari...',
 
     // ── Index / Hero ──
-    'hero.subtitle': 'Temukan Jawaban dari Jutaan Paper Akademik',
+    'hero.subtitle': 'Temukan Jawaban dari Ribuan Paper Kesehatan Indonesia',
     'hero.search_mode': 'Mode Pencarian',
     'hero.answer_mode': 'Mode Jawaban',
-    'hero.search_placeholder': 'Ajukan pertanyaan atau cari paper...',
+    'hero.search_placeholder': 'Cari paper kesehatan, stunting, gizi, epidemiologi...',
     'hero.papers': 'Paper',
     'hero.journals': 'Jurnal',
     'hero.authors': 'Penulis',
@@ -34,16 +34,16 @@ const I18N = {
     'search.no_results': 'Tidak ditemukan hasil untuk query ini. Coba kata kunci lain.',
     'search.spelling': 'Mungkin maksud Anda:',
     'search.query_expanded': 'Query diperluas:',
-    'search.empty_title': 'Cari paper akademik',
-    'search.empty_desc': 'Ketik kata kunci di search bar di atas, lalu tekan Enter',
+    'search.empty_title': 'Cari paper kesehatan',
+    'search.empty_desc': 'Ketik kata kunci kesehatan di search bar di atas, lalu tekan Enter',
     'search.back_home': 'Kembali ke Homepage',
 
     // ── Answer / Citation ──
     'answer.title': 'Jawaban AI',
-    'answer.subtitle': 'Dapatkan jawaban instan dari paper akademik',
-    'answer.placeholder': 'Tanyakan pertanyaan riset Anda...',
+    'answer.subtitle': 'Dapatkan jawaban instan dari paper kesehatan',
+    'answer.placeholder': 'Tanyakan pertanyaan tentang kesehatan masyarakat...',
     'answer.empty_title': 'Tanyakan Pertanyaan Riset Anda',
-    'answer.empty_desc': 'AI akan mencari paper relevan dan menyusun jawaban dengan sitasi inline',
+    'answer.empty_desc': 'AI akan mencari paper kesehatan relevan dan menyusun jawaban dengan sitasi inline',
     'answer.loading': 'AI sedang menganalisis paper dan menyusun jawaban…',
     'answer.loading_time': 'Ini bisa memakan waktu 15-30 detik',
     'answer.copy': 'Salin',
@@ -108,7 +108,7 @@ const I18N = {
     'library.view': 'Lihat',
 
     // ── Footer ──
-    'footer.copyright': '© 2026 ScholarSearch. Temu Kembali Informasi.',
+    'footer.copyright': '© 2026 ScholarSearch Kesehatan. Temu Kembali Informasi.',
   },
 
   en: {
@@ -122,10 +122,10 @@ const I18N = {
     'nav.search_placeholder': 'Search...',
 
     // ── Index / Hero ──
-    'hero.subtitle': 'Discover Answers from Millions of Academic Papers',
+    'hero.subtitle': 'Discover Answers from Thousands of Indonesian Health Research Papers',
     'hero.search_mode': 'Search Mode',
     'hero.answer_mode': 'Answer Mode',
-    'hero.search_placeholder': 'Ask a question or search for papers...',
+    'hero.search_placeholder': 'Search health papers: stunting, nutrition, epidemiology...',
     'hero.papers': 'Papers',
     'hero.journals': 'Journals',
     'hero.authors': 'Authors',
@@ -139,13 +139,13 @@ const I18N = {
     'search.no_results': 'No results found for this query. Try different keywords.',
     'search.spelling': 'Did you mean:',
     'search.query_expanded': 'Query expanded:',
-    'search.empty_title': 'Search academic papers',
-    'search.empty_desc': 'Type keywords in the search bar above, then press Enter',
+    'search.empty_title': 'Search health research papers',
+    'search.empty_desc': 'Type health-related keywords in the search bar above, then press Enter',
     'search.back_home': 'Back to Homepage',
 
     // ── Answer / Citation ──
     'answer.title': 'AI Answer',
-    'answer.subtitle': 'Get instant answers from academic papers',
+    'answer.subtitle': 'Get instant answers from health research papers',
     'answer.placeholder': 'Ask your research question...',
     'answer.empty_title': 'Ask Your Research Question',
     'answer.empty_desc': 'AI will search relevant papers and compose an answer with inline citations',
@@ -211,7 +211,7 @@ const I18N = {
     'profile.logout': 'Log out',
 
     // ── Footer ──
-    'footer.copyright': '© 2026 ScholarSearch. Information Retrieval.',
+    'footer.copyright': '© 2026 ScholarSearch Health. Information Retrieval.',
   }
 };
 

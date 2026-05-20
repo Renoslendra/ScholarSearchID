@@ -46,7 +46,7 @@ CREATE TABLE IF NOT EXISTS papers (
     doi         TEXT DEFAULT '',
     url         TEXT DEFAULT '',
     keywords    TEXT DEFAULT '[]',
-    subject     TEXT DEFAULT 'Computer Science & IT',
+    subject     TEXT DEFAULT 'Public Health',
     created_at  DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -157,7 +157,7 @@ def insert_paper(paper: dict[str, Any], db_path: str | None = None) -> int:
                 paper.get("doi", ""),
                 paper.get("url", ""),
                 keywords,
-                paper.get("subject", "Computer Science & IT"),
+                paper.get("subject", "Public Health"),
             ),
         )
         return cur.lastrowid  # type: ignore[return-value]

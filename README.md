@@ -406,16 +406,21 @@ def bm25_score(query_terms, doc_id, k1=1.5, b=0.75):
 ### Data yang Dibutuhkan per Paper:
 ```json
 {
-    "id": "paper_001",
-    "title": "Analisis Sentimen Menggunakan IndoBERT",
-    "abstract": "Penelitian ini mengkaji...",
-    "authors": ["Budi Santoso", "Ani Wijaya"],
-    "year": 2023,
-    "keywords": ["sentiment analysis", "NLP", "IndoBERT"],
-    "journal": "Jurnal Informatika UTM",
-    "full_text": "...",
-    "citations": ["paper_005", "paper_012", "paper_089"],
-    "url": "https://..."
+    "id": 1,
+    "garuda_id": "3862674",
+    "title": "ESTIMASI PROPORSI SISWA SD KELAS RENDAH USIA 6 SAMPAI 7 TAHUN YANG MEMILIKI KESALAHAN ARTIKULASI DI KECAMATAN JEBRES KOTA SURAKARTA",
+    "abstract": "Artikulasi merupakan salah satu modal dasar untuk bicara dan bahasa...",
+    "authors": ["Gunawan", "Restu Wahyu Wibawati", "Kiyat Sudrajad", "Setyadi Nugroho"],
+    "year": 2022,
+    "journal": "(MJN)",
+    "publisher": "",
+    "issn": "",
+    "eissn": "",
+    "doi": "",
+    "url": "https://garuda.kemdiktisaintek.go.id/documents/detail/3862674",
+    "keywords": [],
+    "subject": "Public Health",
+    "created_at": "2026-05-20 13:28:14"
 }
 ```
 <img src="https://user-images.githubusercontent.com/73097560/115834477-dbab4500-a447-11eb-908a-139a6edaec5c.gif">

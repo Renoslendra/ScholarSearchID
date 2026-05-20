@@ -45,8 +45,8 @@
         const input = document.getElementById('search-input');
         if (input) {
           input.placeholder = mode === 'answer'
-            ? 'Ask a research question...'
-            : 'Ask a question or search for papers...';
+            ? (typeof t === 'function' ? t('answer.placeholder') : 'Tanyakan pertanyaan tentang kesehatan masyarakat...')
+            : (typeof t === 'function' ? t('hero.search_placeholder') : 'Cari paper kesehatan, stunting, gizi, epidemiologi...');
         }
       });
     });
@@ -157,7 +157,7 @@
     searchForm.className = 'mobile-menu-search';
     searchForm.setAttribute('role', 'search');
     searchForm.innerHTML =
-      '<input type="search" aria-label="Search papers" placeholder="Search papers..." autocomplete="off">' +
+      '<input type="search" aria-label="Search papers" placeholder="' + (typeof t === 'function' ? t('hero.search_placeholder') : 'Cari paper kesehatan, stunting, gizi, epidemiologi...') + '" autocomplete="off">' +
       '<button type="submit" aria-label="Search">' + createIcon('search') + '</button>';
     searchForm.addEventListener('submit', (e) => {
       e.preventDefault();
