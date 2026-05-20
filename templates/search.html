@@ -1,10 +1,10 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Search Results — ScholarSearch Kesehatan</title>
-  <link rel="stylesheet" href="/static/css/style.css?v=5">
+  <title>Search Results â€” ScholarSearch Kesehatan</title>
+  <link rel="stylesheet" href="/static/css/style.css?v=6">
   <style>
     /* Dark theme overrides for search results */
     .results-container { background: var(--bg); }
@@ -151,7 +151,7 @@
   <script src="/static/js/app.js"></script>
   <script src="/static/js/search.js?v=3"></script>
   <script>
-    // ── Dynamic Search Results with Cache ──
+    // â”€â”€ Dynamic Search Results with Cache â”€â”€
     (function(){
       const params = new URLSearchParams(window.location.search);
       const q = params.get('q') || '';
@@ -170,7 +170,7 @@
         resultsView.style.display = 'block';
       }
 
-      // ── Cache helpers (sessionStorage, 5 menit) ──
+      // â”€â”€ Cache helpers (sessionStorage, 5 menit) â”€â”€
       const CACHE_TTL = 5 * 60 * 1000;
       function cKey(pg, md) { return 'srch_' + q + '_' + md + '_' + pg; }
       function getCache(pg, md) {
@@ -190,7 +190,7 @@
         if (!q) return;
         const m = model || document.getElementById('model-select').value;
 
-        // Cek cache — jika ada, render langsung tanpa fetch
+        // Cek cache â€” jika ada, render langsung tanpa fetch
         const cached = getCache(page, m);
         if (cached) {
           renderResults(cached, page, m);
@@ -198,7 +198,7 @@
         }
 
         const url = '/api/search?q=' + encodeURIComponent(q) + '&page=' + page + '&model=' + m + '&per_page=10';
-        document.getElementById('results-list').innerHTML = '<p style="color:var(--text-muted);padding:24px 0;">Searching…</p>';
+        document.getElementById('results-list').innerHTML = '<p style="color:var(--text-muted);padding:24px 0;">Searchingâ€¦</p>';
 
         fetch(url).then(r => r.json()).then(data => {
           setCache(page, m, data);
@@ -212,11 +212,11 @@
         // Query text
         const qt = document.getElementById('query-text');
         if (qt) qt.textContent = '"' + data.query + '"';
-        document.title = data.query + ' — ScholarSearch Kesehatan';
+        document.title = data.query + ' â€” ScholarSearch Kesehatan';
 
         // Meta
         const meta = document.getElementById('results-meta');
-        if (meta) meta.textContent = data.total + ' ' + t('search.results_suffix') + ' (' + data.time_ms + ' ms) — ' + (data.model_used||'').toUpperCase();
+        if (meta) meta.textContent = data.total + ' ' + t('search.results_suffix') + ' (' + data.time_ms + ' ms) â€” ' + (data.model_used||'').toUpperCase();
 
         // Spelling
         const hint = document.getElementById('spelling-hint');
@@ -256,7 +256,7 @@
 
           data.results.forEach((r, i) => {
             const authors = Array.isArray(r.authors) ? r.authors.join(', ') : (r.authors||'');
-            const abstract = (r.abstract||'').substring(0, 300) + ((r.abstract||'').length > 300 ? '…' : '');
+            const abstract = (r.abstract||'').substring(0, 300) + ((r.abstract||'').length > 300 ? 'â€¦' : '');
             const isSaved = savedIds.has(r.id);
             const saveFill = isSaved ? 'currentColor' : 'none';
             const saveColor = isSaved ? '#2563eb' : 'currentColor';
@@ -266,7 +266,7 @@
             card.style.transitionDelay = (i * 0.06) + 's';
             card.innerHTML =
               '<h3><a href="' + (r.url||'#') + '" target="_blank">' + r.title + '</a></h3>' +
-              '<div class="result-meta"><span>' + authors + '</span><span class="dot">·</span><span>' + (r.journal||'') + '</span><span class="dot">·</span><span>' + (r.year||'') + '</span></div>' +
+              '<div class="result-meta"><span>' + authors + '</span><span class="dot">Â·</span><span>' + (r.journal||'') + '</span><span class="dot">Â·</span><span>' + (r.year||'') + '</span></div>' +
               '<p class="result-abstract">' + abstract + '</p>' +
               '<div class="result-footer"><div class="result-badges"><span class="badge">' + (r.model||'').toUpperCase() + ': ' + r.score + '</span></div>' +
               '<div class="result-actions" style="display:flex;gap:12px;align-items:center;">' +
@@ -309,13 +309,13 @@
            // Fallback if not logged in
            data.results.forEach((r, i) => {
              const authors = Array.isArray(r.authors) ? r.authors.join(', ') : (r.authors||'');
-             const abstract = (r.abstract||'').substring(0, 300) + ((r.abstract||'').length > 300 ? '…' : '');
+             const abstract = (r.abstract||'').substring(0, 300) + ((r.abstract||'').length > 300 ? 'â€¦' : '');
              const card = document.createElement('article');
              card.className = 'result-card reveal';
              card.style.transitionDelay = (i * 0.06) + 's';
              card.innerHTML =
                '<h3><a href="' + (r.url||'#') + '" target="_blank">' + r.title + '</a></h3>' +
-               '<div class="result-meta"><span>' + authors + '</span><span class="dot">·</span><span>' + (r.journal||'') + '</span><span class="dot">·</span><span>' + (r.year||'') + '</span></div>' +
+               '<div class="result-meta"><span>' + authors + '</span><span class="dot">Â·</span><span>' + (r.journal||'') + '</span><span class="dot">Â·</span><span>' + (r.year||'') + '</span></div>' +
                '<p class="result-abstract">' + abstract + '</p>' +
                '<div class="result-footer"><div class="result-badges"><span class="badge">' + (r.model||'').toUpperCase() + ': ' + r.score + '</span></div>' +
                '<div class="result-actions" style="display:flex;gap:12px;align-items:center;">' +
@@ -361,7 +361,7 @@
           pg.appendChild(nextCompact);
           return;
         }
-        // Page buttons — sliding window centered on current page
+        // Page buttons â€” sliding window centered on current page
         const maxVisible = 5;
         let startPage = Math.max(1, page - Math.floor(maxVisible / 2));
         let endPage = Math.min(total, startPage + maxVisible - 1);
@@ -379,7 +379,7 @@
           if (startPage > 2) {
             const ell = document.createElement('span');
             ell.className = 'page-ellipsis';
-            ell.textContent = '…';
+            ell.textContent = 'â€¦';
             pg.appendChild(ell);
           }
         }
@@ -397,7 +397,7 @@
           if (endPage < total - 1) {
             const ell = document.createElement('span');
             ell.className = 'page-ellipsis';
-            ell.textContent = '…';
+            ell.textContent = 'â€¦';
             pg.appendChild(ell);
           }
           const last = document.createElement('button');
